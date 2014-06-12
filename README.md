@@ -10,9 +10,10 @@ Copyright (c) by Filosoft OÜ and University of Tartu.
 
 # Installation
 
-To build and install the Python library, invoke the following command:
+To build and install the Python library on Linux, invoke the following commands:
 ```
-python setup.py install
+python setup.py build
+sudo python setup.py install
 ```
 
 # Usage examples

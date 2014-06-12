@@ -1,12 +1,20 @@
-import vabamorf as vm
+import pyvabamorf.vabamorf as vm
+import os
+import atexit
 
 if not vm.FSCInit():
     raise Exception('Could not initiate pyvabamorf library. FSCInit() returned false!')
 
+@atexit.register
+def terminate():
+    vm.FCSTerminate()
 
-class PyVabaMorf(object):
+PACKAGE_PATH = os.path.dirname(__file__)
+DICT_PATH = os.path.join(PACKAGE_PATH, 'dct')
 
-    def __init__(self, lexPath='/home/timo/projects/pyvabamorf/dct'):
+class PyVabamorf(object):
+
+    def __init__(self, lexPath=DICT_PATH):
         self._analyzer = vm.Analyzer(lexPath)
 
     def _an_to_dict(self, an):
@@ -26,7 +34,7 @@ class PyVabaMorf(object):
         return result
 
     def analyze(self, sentence):
-        morfresult = self._analyzer.analyze(pm.StringVector(self._sentence_to_utf8(sentence)))
+        morfresult = self._analyzer.analyze(vm.StringVector(self._sentence_to_utf8(sentence)))
         result = []
         for word, analysis in morfresult:
             analysis = [self._an_to_dict(an) for an in analysis]
