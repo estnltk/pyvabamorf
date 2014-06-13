@@ -35,8 +35,20 @@ PyVabamorf should work with both Python 2.x and Python 3.x versions, although we
 ## Binary packages
 
 We plan to release precompiled and easily installable packages for both 32 and 64 bit versions of Linux and Windows.
+We also plan to submit the main releases of the package to the Python Package Index (PyPI), so the library can be installed using _pip_ tool.
 
 # Usage examples
 
-todo
+## Morphological analysis and lemmatization
+
+TODO
+
+## Spell-check
+
+TODO
+
+## Generating word forms from root
+
+TODO
+
 
