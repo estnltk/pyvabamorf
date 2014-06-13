@@ -1,43 +1,65 @@
 import pyvabamorf.vabamorf as vm
 import os
 import atexit
+import six
 
 if not vm.FSCInit():
     raise Exception('Could not initiate pyvabamorf library. FSCInit() returned false!')
 
 @atexit.register
 def terminate():
-    vm.FCSTerminate()
+    vm.FSCTerminate()
 
 PACKAGE_PATH = os.path.dirname(__file__)
 DICT_PATH = os.path.join(PACKAGE_PATH, 'dct')
+
+def convert(word):
+    '''This method converts given `word` to appropriate encoding and type to be given to
+       SWIG wrapper.'''
+    if six.PY2:
+        if isinstance(word, unicode):
+            return word.encode('utf-8')
+        else:
+            return word.decode('utf-8').encode('utf-8') # make sure it is real utf8, otherwise complain
+    else: # ==> Py3
+        if isinstance(word, bytes):
+            return word.decode('utf-8') # bytes must be in utf8
+        return word
+
+def deconvert(word):
+    '''This method converts back the output from wrapper.
+       Result should be `unicode` for Python2 and `str` for Python3'''
+    if six.PY2:
+        return word.decode('utf-8')
+    else:
+        return word
+
 
 class PyVabamorf(object):
 
     def __init__(self, lexPath=DICT_PATH):
         self._analyzer = vm.Analyzer(lexPath)
 
+    def _convert_sentence(self, sentence):
+        '''This method converts the list of strings to appropriate encoding/type, depending
+           on Python version.'''
+        return [convert(word) for word in sentence]
+
     def _an_to_dict(self, an):
         '''Convert an analysis to dicti onary.'''
-        return {'root': an.root.decode('utf-8'),
-                'ending': an.ending.decode('utf-8'),
-                'clitic': an.clitic.decode('utf-8'),
-                'partofspeech': an.partofspeech.decode('utf-8'),
-                'form': an.form.decode('utf-8')}
-
-    def _sentence_to_utf8(self, sentence):
-        '''Convert a sequence of unicode strings to a list of utf-8 encoded objects.'''
-        result = []
-        for word in sentence:
-            assert isinstance(word, unicode)
-            result.append(word.encode('utf-8'))
-        return result
+        return {'root': deconvert(an.root),
+                'ending': deconvert(an.ending),
+                'clitic': deconvert(an.clitic),
+                'partofspeech': deconvert(an.partofspeech),
+                'form': deconvert(an.form)}
 
     def analyze(self, sentence):
-        morfresult = self._analyzer.analyze(vm.StringVector(self._sentence_to_utf8(sentence)))
+        sentence = self._convert_sentence(sentence)
+        morfresult = self._analyzer.analyze(vm.StringVector(sentence))
         result = []
         for word, analysis in morfresult:
             analysis = [self._an_to_dict(an) for an in analysis]
-            result.append({'text': word.decode('utf-8'),
+            result.append({'text': deconvert(word),
                            'analysis': analysis})
         return result
+
