@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import pyvabamorf.vabamorf as vm
 import os
 import atexit

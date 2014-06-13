@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from distutils.core import setup, Extension
 import os
 import sys
