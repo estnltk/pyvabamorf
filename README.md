@@ -11,9 +11,11 @@ Copyright (c) by Filosoft OÜ and University of Tartu.
 
 # Prerequisites
 
-In able to build the package, you need to have configured necessary development tools on your system. Refer to documentation of _distutils_ to see, how this should be done. But you are alrady good to go, if for example you have already installed _numpy_ and _scipy_ packages from source previously using _distutils_.
-
-Another dependency required by PyVabamorf is  SWIG wrapper generator that can be downloaded from here http://swig.org/ .
+In able to build the package, you need to have configured necessary development tools on your system. Refer to documentation of _distutils_ to see, how this should be done. But you are already good to go, if for example you have  installed _numpy_ or _scipy_ packages from source previously using _distutils_.
+In a nutshell, you need following:
+- C++ compiler
+- Python development libraries
+- Another dependency required by PyVabamorf is SWIG wrapper generator that can be downloaded from http://swig.org/ .
 
 # Installation
 
@@ -25,7 +27,7 @@ sudo python setup.py install
 
 Then run the tests and see if they all pass:
 ```
-python -m unittest discoverpyvabamorf.test
+python -m unittest discover pyvabamorf.test
 ```
 
 PyVabamorf should work with both Python 2.x and Python 3.x versions, although we have tested it currently only with Python 2.7 and Python 3.3.

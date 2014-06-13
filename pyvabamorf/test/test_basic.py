@@ -11,5 +11,5 @@ class TestBasic(unittest.TestCase):
         self.morf.analyze(u'Ööd on siin pimedad'.split())
     
     def test_nonunicode_analuze_fails(self):
-        self.assertRaises(Exception, self.morf.analyze, ('Ööd on siin pimedad'.encode('latin-1').split()))
+        self.assertRaises(Exception, self.morf.analyze, (u'Ööd on siin pimedad'.encode('latin-1').split()))
 
