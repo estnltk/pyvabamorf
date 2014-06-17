@@ -69,7 +69,7 @@ class PyVabamorf(object):
                'partofspeech': pos,
                'form': form,
                'lemma': lemma,
-               'tokens': toks}
+               'lemma_tokens': toks}
 
     def analyze(self, sentence):
         sentence = self._convert_sentence(sentence)
