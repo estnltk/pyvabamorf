@@ -10,7 +10,6 @@
 
 #include "etmrf.h"
 
-#include <iostream>
 #include <vector>
 #include <string>
 #include <cstdio>
@@ -60,5 +59,9 @@ private:
     ETMRFA morf;
 };
 
+
+/*class Speller {
+    Speller(std::string const lexPath);  
+};*/
 
 #endif

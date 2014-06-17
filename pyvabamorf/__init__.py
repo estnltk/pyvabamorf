@@ -35,6 +35,14 @@ def deconvert(word):
     else:
         return word
 
+def wordtokens(word):
+    '''Function that takes the root form of the word and parses it into tokens.
+       For example '<all_m<aa_r<aud_t<ee_j<aosk<ond' would be parsed as ['all', 'maa', 'raud', 'tee', 'jaos', 'kond']
+       '''
+    if word == '<' or word == '_': # special case
+        return word
+    return word.replace('<', '').split('_')
+    
 
 class PyVabamorf(object):
 
@@ -48,11 +56,20 @@ class PyVabamorf(object):
 
     def _an_to_dict(self, an):
         '''Convert an analysis to dicti onary.'''
-        return {'root': deconvert(an.root),
-                'ending': deconvert(an.ending),
-                'clitic': deconvert(an.clitic),
-                'partofspeech': deconvert(an.partofspeech),
-                'form': deconvert(an.form)}
+        root = deconvert(an.root)
+        ending = deconvert(an.ending)
+        clitic = deconvert(an.clitic)
+        pos = deconvert(an.partofspeech)
+        form = deconvert(an.form)
+        toks = wordtokens(root)
+        lemma = u''.join(toks)
+        return {'root': root,
+               'ending': ending,
+               'clitic': clitic,
+               'partofspeech': pos,
+               'form': form,
+               'lemma': lemma,
+               'tokens': toks}
 
     def analyze(self, sentence):
         sentence = self._convert_sentence(sentence)
