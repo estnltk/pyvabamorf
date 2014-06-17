@@ -48,7 +48,67 @@ so the library can be installed using the _pip_ tool.
 
 ## Morphological analysis and lemmatization
 
-TODO
+Code:
+```python
+from pyvabamorf import PyVabamorf
+from pprint import pprint
+
+m = PyVabamorf()
+pprint(m.analyze('Tüüne öötöömiljöö allmaaraudteejaamas!'.split()))
+```
+
+One thing to note about Vabamorf library, is that it yet does not do morphological disambiguation found in commercial
+version of the library. Therefore the analysis contain all possible analysis variants.
+
+Output:
+```
+[{'analysis': [{'clitic': '',
+                'ending': '0',
+                'form': 'sg g',
+                'lemma': 'tüün',
+                'lemma_tokens': ['tüün'],
+                'partofspeech': 'A',
+                'root': 't<üün'},
+               {'clitic': '',
+                'ending': '0',
+                'form': 'sg g',
+                'lemma': 'tüüne',
+                'lemma_tokens': ['tüüne'],
+                'partofspeech': 'A',
+                'root': 't<üüne'},
+               {'clitic': '',
+                'ending': '0',
+                'form': 'sg n',
+                'lemma': 'tüüne',
+                'lemma_tokens': ['tüüne'],
+                'partofspeech': 'A',
+                'root': 't<üüne'}],
+  'text': 'Tüüne'},
+ {'analysis': [{'clitic': '',
+                'ending': '0',
+                'form': 'sg g',
+                'lemma': 'öötöömiljöö',
+                'lemma_tokens': ['öö', 'töö', 'miljöö'],
+                'partofspeech': 'S',
+                'root': '<öö_t<öö_milj<öö'},
+               {'clitic': '',
+                'ending': '0',
+                'form': 'sg n',
+                'lemma': 'öötöömiljöö',
+                'lemma_tokens': ['öö', 'töö', 'miljöö'],
+                'partofspeech': 'S',
+                'root': '<öö_t<öö_milj<öö'}],
+  'text': 'öötöömiljöö'},
+ {'analysis': [{'clitic': '',
+                'ending': 's',
+                'form': 'sg in',
+                'lemma': 'allmaaraudteejaam',
+                'lemma_tokens': ['all', 'maa', 'raud', 'tee', 'jaam'],
+                'partofspeech': 'S',
+                'root': '<all_m<aa_r<aud_t<ee_j<aam'}],
+  'text': 'allmaaraudteejaamas!'}]
+```
+
 
 ## Spell-check
 

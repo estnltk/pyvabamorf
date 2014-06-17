@@ -47,7 +47,7 @@ class PyVabamorf(object):
         return [convert(word) for word in sentence]
 
     def _an_to_dict(self, an):
-        '''Convert an analysis to dicti onary.'''
+        '''Convert an analysis to dictionary.'''
         root = deconvert(an.root)
         ending = deconvert(an.ending)
         clitic = deconvert(an.clitic)
