@@ -37,6 +37,7 @@ def wordtokens(word):
     
 
 class PyVabamorf(object):
+    '''Class for performing main tasks of morphological analysis.'''
 
     def __init__(self, lexPath=DICT_PATH):
         self._analyzer = vm.Analyzer(lexPath)
@@ -64,6 +65,68 @@ class PyVabamorf(object):
                'lemma_tokens': toks}
 
     def analyze(self, sentence):
+        '''Given an list of words, perform lemmatizartion and morphological analysis.
+        
+        Returns a list of dictionaries woth morphological analysis.
+        
+        Example:
+        
+        >>> from pyvabamorf import PyVabamorf
+        >>> from pprint import pprint
+
+        >>> m = PyVabamorf()
+        >>> pprint(m.analyze('Tüüne öötöömiljöö allmaaraudteejaamas!'.split()))
+        
+        Output:
+        
+        [{'analysis': [{'clitic': '',
+                        'ending': '0',
+                        'form': 'sg g',
+                        'lemma': 'tüün',
+                        'lemma_tokens': ['tüün'],
+                        'partofspeech': 'A',
+                        'root': 't<üün'},
+                    {'clitic': '',
+                        'ending': '0',
+                        'form': 'sg g',
+                        'lemma': 'tüüne',
+                        'lemma_tokens': ['tüüne'],
+                        'partofspeech': 'A',
+                        'root': 't<üüne'},
+                    {'clitic': '',
+                        'ending': '0',
+                        'form': 'sg n',
+                        'lemma': 'tüüne',
+                        'lemma_tokens': ['tüüne'],
+                        'partofspeech': 'A',
+                        'root': 't<üüne'}],
+        'text': 'Tüüne'},
+        {'analysis': [{'clitic': '',
+                        'ending': '0',
+                        'form': 'sg g',
+                        'lemma': 'öötöömiljöö',
+                        'lemma_tokens': ['öö', 'töö', 'miljöö'],
+                        'partofspeech': 'S',
+                        'root': '<öö_t<öö_milj<öö'},
+                    {'clitic': '',
+                        'ending': '0',
+                        'form': 'sg n',
+                        'lemma': 'öötöömiljöö',
+                        'lemma_tokens': ['öö', 'töö', 'miljöö'],
+                        'partofspeech': 'S',
+                        'root': '<öö_t<öö_milj<öö'}],
+        'text': 'öötöömiljöö'},
+        {'analysis': [{'clitic': '',
+                        'ending': 's',
+                        'form': 'sg in',
+                        'lemma': 'allmaaraudteejaam',
+                        'lemma_tokens': ['all', 'maa', 'raud', 'tee', 'jaam'],
+                        'partofspeech': 'S',
+                        'root': '<all_m<aa_r<aud_t<ee_j<aam'}],
+        'text': 'allmaaraudteejaamas!'}]
+        '''
+
+
         sentence = self._convert_sentence(sentence)
         morfresult = self._analyzer.analyze(vm.StringVector(sentence))
         result = []

@@ -12,7 +12,7 @@ Copyright (c) by Filosoft OÜ and University of Tartu.
 
 # Prerequisites
 
-In able to build the package, you need to have configured necessary development tools on your system.
+In order to build the package, you need to have configured necessary development tools on your system.
 Refer to documentation of _distutils_ to see, how this should be done. But you are already good to go,
 if for example you have  installed _numpy_ or _scipy_ packages from source previously using _distutils_.
 In a nutshell, you need following:
@@ -48,7 +48,7 @@ so the library can be installed using the _pip_ tool.
 
 ## Morphological analysis and lemmatization
 
-Code:
+Python3 code:
 ```python
 from pyvabamorf import PyVabamorf
 from pprint import pprint
@@ -58,7 +58,7 @@ pprint(m.analyze('Tüüne öötöömiljöö allmaaraudteejaamas!'.split()))
 ```
 
 One thing to note about Vabamorf library, is that it yet does not do morphological disambiguation found in commercial
-version of the library. Therefore the analysis contain all possible analysis variants.
+version of the library. Therefore the output contains all possible analysis variants.
 
 Output:
 ```

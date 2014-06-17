@@ -8,8 +8,7 @@ class TestBasic(unittest.TestCase):
         self.morf = PyVabamorf()
     
     def test_analyze(self):
-        self.morf.analyze(u'Ööd on siin pimedad'.split())
+        self.morf.analyze(u'Tüüne öötöömiljoo allmaaraudteejaamas'.split())
     
     def test_nonunicode_analuze_fails(self):
-        self.assertRaises(Exception, self.morf.analyze, (u'Ööd on siin pimedad'.encode('latin-1').split()))
-
+        self.assertRaises(Exception, self.morf.analyze, (u'Tüüne öötöömiljoo allmaaraudteejaamas'.encode('latin-1').split()))
