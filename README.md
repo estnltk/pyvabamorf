@@ -30,6 +30,12 @@ python setup.py build
 sudo python setup.py install
 ```
 
+Alternatively, you can use _pip_ tool to download and install the library from Python Package Index (PyPI). You still need to install necessary dependencies to build the package.
+
+```
+sudo pip install pyvabamorf
+```
+
 Then run the tests and see if they all pass (NB! Don't run them from same directory you have cloned the source distribution):
 ```
 python -m unittest discover pyvabamorf.test
@@ -38,11 +44,10 @@ python -m unittest discover pyvabamorf.test
 PyVabamorf should work with both Python 2.x and Python 3.x versions, although we have tested it
 currently only with Python 2.7 and Python 3.3.
 
+
 ## Binary packages
 
 We plan to release precompiled and easily installable packages for both 32 and 64 bit versions of Linux and Windows.
-We also plan to submit the main releases of the package to the Python Package Index (PyPI),
-so the library can be installed using the _pip_ tool.
 
 # Usage examples
 
