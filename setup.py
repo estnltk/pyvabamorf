@@ -38,7 +38,7 @@ except ImportError:
     from distutils.command.build_scripts import build_scripts
 
 setup(name='pyvabamorf',
-    version="1.0",
+    version="1.1",
     description='Python interface for the Vabamorf Estonian lemmatizer and morphological analyzer.',
     author='Tarmo Vaino, Heiki-Jaan Kaalep, Sven Laur, Timo Petmanson, Aleksandr Tkachenko, Siim Orasmaa',
     author_email='tpetmanson@gmail.com',

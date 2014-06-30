@@ -64,69 +64,7 @@ class PyVabamorf(object):
                'lemma': lemma,
                'lemma_tokens': toks}
 
-    def analyze(self, sentence):
-        '''Given an list of words, perform lemmatizartion and morphological analysis.
-        
-        Returns a list of dictionaries woth morphological analysis.
-        
-        Example:
-        
-        >>> from pyvabamorf import PyVabamorf
-        >>> from pprint import pprint
-
-        >>> m = PyVabamorf()
-        >>> pprint(m.analyze('Tüüne öötöömiljöö allmaaraudteejaamas!'.split()))
-        
-        Output:
-        
-        [{'analysis': [{'clitic': '',
-                        'ending': '0',
-                        'form': 'sg g',
-                        'lemma': 'tüün',
-                        'lemma_tokens': ['tüün'],
-                        'partofspeech': 'A',
-                        'root': 't<üün'},
-                    {'clitic': '',
-                        'ending': '0',
-                        'form': 'sg g',
-                        'lemma': 'tüüne',
-                        'lemma_tokens': ['tüüne'],
-                        'partofspeech': 'A',
-                        'root': 't<üüne'},
-                    {'clitic': '',
-                        'ending': '0',
-                        'form': 'sg n',
-                        'lemma': 'tüüne',
-                        'lemma_tokens': ['tüüne'],
-                        'partofspeech': 'A',
-                        'root': 't<üüne'}],
-        'text': 'Tüüne'},
-        {'analysis': [{'clitic': '',
-                        'ending': '0',
-                        'form': 'sg g',
-                        'lemma': 'öötöömiljöö',
-                        'lemma_tokens': ['öö', 'töö', 'miljöö'],
-                        'partofspeech': 'S',
-                        'root': '<öö_t<öö_milj<öö'},
-                    {'clitic': '',
-                        'ending': '0',
-                        'form': 'sg n',
-                        'lemma': 'öötöömiljöö',
-                        'lemma_tokens': ['öö', 'töö', 'miljöö'],
-                        'partofspeech': 'S',
-                        'root': '<öö_t<öö_milj<öö'}],
-        'text': 'öötöömiljöö'},
-        {'analysis': [{'clitic': '',
-                        'ending': 's',
-                        'form': 'sg in',
-                        'lemma': 'allmaaraudteejaam',
-                        'lemma_tokens': ['all', 'maa', 'raud', 'tee', 'jaam'],
-                        'partofspeech': 'S',
-                        'root': '<all_m<aa_r<aud_t<ee_j<aam'}],
-        'text': 'allmaaraudteejaamas!'}]
-        '''
-
-
+    def analyze_sentence(self, sentence):
         sentence = self._convert_sentence(sentence)
         morfresult = self._analyzer.analyze(vm.StringVector(sentence))
         result = []
@@ -135,4 +73,71 @@ class PyVabamorf(object):
             result.append({'text': deconvert(word),
                            'analysis': analysis})
         return result
+
+def analyze_sentence(sentence):
+    '''Given an list of words, perform lemmatizartion and morphological analysis.
     
+    Returns a list of dictionaries woth morphological analysis.
+    
+    Example:
+    
+    >>> from pyvabamorf import analyze_sentence
+    >>> from pprint import pprint
+    >>> pprint(analyze_sentence('Tüüne öötöömiljöö allmaaraudteejaamas!'.split()))
+    
+    Output:
+    
+    [{'analysis': [{'clitic': '',
+                    'ending': '0',
+                    'form': 'sg g',
+                    'lemma': 'tüün',
+                    'lemma_tokens': ['tüün'],
+                    'partofspeech': 'A',
+                    'root': 't<üün'},
+                {'clitic': '',
+                    'ending': '0',
+                    'form': 'sg g',
+                    'lemma': 'tüüne',
+                    'lemma_tokens': ['tüüne'],
+                    'partofspeech': 'A',
+                    'root': 't<üüne'},
+                {'clitic': '',
+                    'ending': '0',
+                    'form': 'sg n',
+                    'lemma': 'tüüne',
+                    'lemma_tokens': ['tüüne'],
+                    'partofspeech': 'A',
+                    'root': 't<üüne'}],
+    'text': 'Tüüne'},
+    {'analysis': [{'clitic': '',
+                    'ending': '0',
+                    'form': 'sg g',
+                    'lemma': 'öötöömiljöö',
+                    'lemma_tokens': ['öö', 'töö', 'miljöö'],
+                    'partofspeech': 'S',
+                    'root': '<öö_t<öö_milj<öö'},
+                {'clitic': '',
+                    'ending': '0',
+                    'form': 'sg n',
+                    'lemma': 'öötöömiljöö',
+                    'lemma_tokens': ['öö', 'töö', 'miljöö'],
+                    'partofspeech': 'S',
+                    'root': '<öö_t<öö_milj<öö'}],
+    'text': 'öötöömiljöö'},
+    {'analysis': [{'clitic': '',
+                    'ending': 's',
+                    'form': 'sg in',
+                    'lemma': 'allmaaraudteejaam',
+                    'lemma_tokens': ['all', 'maa', 'raud', 'tee', 'jaam'],
+                    'partofspeech': 'S',
+                    'root': '<all_m<aa_r<aud_t<ee_j<aam'}],
+    'text': 'allmaaraudteejaamas!'}]
+    '''
+    # we tie an instance of `PyVabamorf` with `analyze_sentence` function, so this function could be used as
+    # an argument to `multiprocessing.Pool.map` method for example.
+    # It detects if it is called in a subprocess and creates a new `PyVabamorf` instance if necessary.
+    if not hasattr(analyze_sentence, 'pid') or analyze_sentence.pid != os.getpid():
+        analyze_sentence.pid = os.getpid()
+        analyze_sentence.morf = PyVabamorf()
+        
+    return analyze_sentence.morf.analyze_sentence(sentence)

@@ -55,11 +55,10 @@ We plan to release precompiled and easily installable packages for both 32 and 6
 
 Python3 code:
 ```python
-from pyvabamorf import PyVabamorf
+from pyvabamorf import analyze_sentence
 from pprint import pprint
 
-m = PyVabamorf()
-pprint(m.analyze('Tüüne öötöömiljöö allmaaraudteejaamas!'.split()))
+pprint(analyze_sentence('Tüüne öötöömiljöö allmaaraudteejaamas!'.split()))
 ```
 
 One thing to note about Vabamorf library, is that it yet does not do morphological disambiguation found in commercial
@@ -114,13 +113,108 @@ Output:
   'text': 'allmaaraudteejaamas!'}]
 ```
 
+It is possible to use `analyze_sentence` function in `multiprocessing` methods, such as `Pool.map`. This is convenient to speed up processing large corpora.
 
-## Spell-check
-
-TODO
-
-## Generating word forms from root
-
-TODO
-
+```
+>>> from pyvabamorf import analyze_sentence
+>>> from multiprocessing import Pool
+>>> from pprint import pprint
+>>> 
+>>> pool = Pool(2) # pool with two processes
+>>> sentences = [u'Tere maailm, mis teoksil?'.split(),
+...              u'Täna tuleb imeilus päev!'.split()]
+>>> pprint(pool.map(analyze_sentence, sentences))
+[[{'analysis': [{'clitic': '',
+                 'ending': '0',
+                 'form': '',
+                 'lemma': 'tere',
+                 'lemma_tokens': ['tere'],
+                 'partofspeech': 'I',
+                 'root': 'tere'},
+                {'clitic': '',
+                 'ending': '0',
+                 'form': 'sg g',
+                 'lemma': 'tere',
+                 'lemma_tokens': ['tere'],
+                 'partofspeech': 'S',
+                 'root': 'tere'},
+                {'clitic': '',
+                 'ending': '0',
+                 'form': 'sg n',
+                 'lemma': 'tere',
+                 'lemma_tokens': ['tere'],
+                 'partofspeech': 'S',
+                 'root': 'tere'}],
+   'text': 'Tere'},
+  {'analysis': [{'clitic': '',
+                 'ending': '0',
+                 'form': 'sg n',
+                 'lemma': 'maailm',
+                 'lemma_tokens': ['maa', 'ilm'],
+                 'partofspeech': 'S',
+                 'root': 'm<aa_<ilm'}],
+   'text': 'maailm,'},
+  {'analysis': [{'clitic': '',
+                 'ending': '0',
+                 'form': 'pl n',
+                 'lemma': 'mis',
+                 'lemma_tokens': ['mis'],
+                 'partofspeech': 'P',
+                 'root': 'mis'},
+                {'clitic': '',
+                 'ending': '0',
+                 'form': 'sg n',
+                 'lemma': 'mis',
+                 'lemma_tokens': ['mis'],
+                 'partofspeech': 'P',
+                 'root': 'mis'}],
+   'text': 'mis'},
+  {'analysis': [{'clitic': '',
+                 'ending': '0',
+                 'form': '',
+                 'lemma': 'teoksil',
+                 'lemma_tokens': ['teoksil'],
+                 'partofspeech': 'D',
+                 'root': 't<eoksil'}],
+   'text': 'teoksil?'}],
+ [{'analysis': [{'clitic': '',
+                 'ending': '0',
+                 'form': '',
+                 'lemma': 'täna',
+                 'lemma_tokens': ['täna'],
+                 'partofspeech': 'D',
+                 'root': 'täna'},
+                {'clitic': '',
+                 'ending': '0',
+                 'form': 'o',
+                 'lemma': 'täna',
+                 'lemma_tokens': ['täna'],
+                 'partofspeech': 'V',
+                 'root': 'täna'}],
+   'text': 'Täna'},
+  {'analysis': [{'clitic': '',
+                 'ending': 'b',
+                 'form': 'b',
+                 'lemma': 'tule',
+                 'lemma_tokens': ['tule'],
+                 'partofspeech': 'V',
+                 'root': 'tule'}],
+   'text': 'tuleb'},
+  {'analysis': [{'clitic': '',
+                 'ending': '0',
+                 'form': 'sg n',
+                 'lemma': 'imeilus',
+                 'lemma_tokens': ['ime', 'ilus'],
+                 'partofspeech': 'A',
+                 'root': 'ime_ilus'}],
+   'text': 'imeilus'},
+  {'analysis': [{'clitic': '',
+                 'ending': '0',
+                 'form': 'sg n',
+                 'lemma': 'päev',
+                 'lemma_tokens': ['päev'],
+                 'partofspeech': 'S',
+                 'root': 'p<äev'}],
+   'text': 'päev!'}]]
+```
 

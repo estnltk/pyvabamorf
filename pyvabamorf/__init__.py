@@ -9,4 +9,4 @@ if not vm.FSCInit():
 def terminate():
     vm.FSCTerminate()
 
-from morf import PyVabamorf
+from morf import analyze_sentence
