@@ -2,8 +2,7 @@ PyVabamorf
 ==========
 
 PyVabamorf is a Python interface for the Vabamorf Estonian lemmatizer and morphological analyzer.
-Vabamorf is a open source version of _estmorf_ morphological analyzer by Filosoft,
-which can be obtained from here: https://github.com/Filosoft/vabamorf .
+Vabamorf is a open source morphological analyzer by Filosoft, which can be obtained from here: https://github.com/Filosoft/vabamorf .
 
 # License
 
@@ -20,7 +19,7 @@ In a nutshell, you need following:
 - Python development libraries
 
 Additional dependencies:
-- SWIG wrapper generator that can be downloaded from http://swig.org/ . We are currently using version 3.0 on development machines.
+- SWIG wrapper generator that can be downloaded from http://swig.org/ . We are currently using version 2.0.10 on development machines.
 
 # Installation
 
