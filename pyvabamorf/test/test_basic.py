@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import unittest
 from pyvabamorf import analyze_sentence
-
+from pyvabamorf.morf import wordtokens
 
 class TestBasic(unittest.TestCase):
     
@@ -68,3 +68,14 @@ class TestBasic(unittest.TestCase):
                         'root': u'<all_m<aa_r<aud_t<ee_j<aam'}],
         'text': u'allmaaraudteejaamas!'}]
 
+
+class TestWordTokens(unittest.TestCase):
+    '''Testcase for removal of wierd helper characters in vabamorf output.'''
+
+    def test_intsident(self):
+        tokens = wordtokens(u'?intsiden]t')
+        self.assertListEqual(tokens, [u'intsident'])
+
+    def test_edasatatud(self):
+        tokens = wordtokens(u'edasta=tud')
+        self.assertListEqual(tokens, [u'edastatud'])

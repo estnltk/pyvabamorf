@@ -2,6 +2,7 @@
 import pyvabamorf.vabamorf as vm
 import os
 import six
+import re
 
 PACKAGE_PATH = os.path.dirname(__file__)
 DICT_PATH = os.path.join(PACKAGE_PATH, 'dct')
@@ -31,9 +32,9 @@ def wordtokens(word):
     '''Function that takes the root form of the word and parses it into tokens.
        For example '<all_m<aa_r<aud_t<ee_j<aosk<ond' would be parsed as ['all', 'maa', 'raud', 'tee', 'jaos', 'kond']
        '''
-    if word == '<' or word == '_': # special case
+    if word in [u'<', u'_', u'?', u']', u'=']: # special case
         return word
-    return word.replace('<', '').split('_')
+    return re.sub(u'[?<\]=]', '', word).split('_')
     
 
 class PyVabamorf(object):
