@@ -3,6 +3,7 @@ import pyvabamorf.vabamorf as vm
 import os
 import six
 import re
+import warnings
 
 PACKAGE_PATH = os.path.dirname(__file__)
 DICT_PATH = os.path.join(PACKAGE_PATH, 'dct')
@@ -28,13 +29,29 @@ def deconvert(word):
     else:
         return word
 
+def deprecated(func):
+    '''This is a decorator which can be used to mark functions
+    as deprecated. It will result in a warning being emitted
+    when the function is used.
+    
+    Code from https://wiki.python.org/moin/PythonDecoratorLibrary#Generating_Deprecation_Warnings
+    '''
+    def new_func(*args, **kwargs):
+        warnings.warn("Call to deprecated function {}.".format(func.__name__),
+                      category=DeprecationWarning)
+        return func(*args, **kwargs)
+    new_func.__name__ = func.__name__
+    new_func.__doc__ = func.__doc__
+    new_func.__dict__.update(func.__dict__)
+    return new_func
+
 def wordtokens(word):
     '''Function that takes the root form of the word and parses it into tokens.
        For example '<all_m<aa_r<aud_t<ee_j<aosk<ond' would be parsed as ['all', 'maa', 'raud', 'tee', 'jaos', 'kond']
        '''
-    if word in [u'<', u'_', u'?', u']', u'=']: # special case
-        return word
-    return re.sub(u'[?<\]=]', '', word).split('_')
+    if word in [u'?', u'<', u'=', u'+', u']', u'_']: # special case
+        return [word]
+    return re.sub(u'[?<=+\]]', '', word).split('_')
     
 
 class PyVabamorf(object):
@@ -74,6 +91,10 @@ class PyVabamorf(object):
             result.append({'text': deconvert(word),
                            'analysis': analysis})
         return result
+    
+    @deprecated
+    def analyze(self, sentence):
+        return self.analyze_sentence(sentence)
 
 def analyze_sentence(sentence):
     '''Given an list of words, perform lemmatizartion and morphological analysis.

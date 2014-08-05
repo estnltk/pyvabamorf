@@ -76,6 +76,31 @@ class TestWordTokens(unittest.TestCase):
         tokens = wordtokens(u'?intsiden]t')
         self.assertListEqual(tokens, [u'intsident'])
 
-    def test_edasatatud(self):
+    def test_edastatud(self):
         tokens = wordtokens(u'edasta=tud')
         self.assertListEqual(tokens, [u'edastatud'])
+
+    def test_withall(self):
+        tokens = wordtokens(u'all_+maa_raud]_tee_jaam?')
+        self.assertListEqual(tokens, [u'all', u'maa', u'raud', u'tee', u'jaam'])
+        
+    def test_underscore(self):
+        tokens = wordtokens(u'_')
+        self.assertListEqual(tokens, [u'_'])
+        
+    def test_plus(self):
+        tokens = wordtokens(u'+')
+        self.assertListEqual(tokens, [u'+'])
+        
+    def test_equalmark(self):
+        tokens = wordtokens(u'=')
+        self.assertListEqual(tokens, [u'='])
+    
+    def test_ltmark(self):
+        tokens = wordtokens(u'<')
+        self.assertListEqual(tokens, [u'<'])
+   
+    def test_bracketclose(self):
+        tokens = wordtokens(u']')
+        self.assertListEqual(tokens, [u']'])
+

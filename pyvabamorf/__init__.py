@@ -10,3 +10,4 @@ def terminate():
     vm.FSCTerminate()
 
 from morf import analyze_sentence
+from morf import PyVabamorf
