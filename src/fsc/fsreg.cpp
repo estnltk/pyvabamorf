@@ -1,9 +1,11 @@
+/*
 #include "stdfsc.h"
 #include "fstype.h"
 
 #if defined (WIN32) && !defined (WINRT)
 
 #include "fsreg.h"
+
 
 int CFSReg::Split(const CFSString &szPath, HKEY *hRoot, CFSString *pszFolder, CFSString *pszFile)
 {
@@ -235,3 +237,4 @@ int CFSReg::IniWrite(const CFSString &szFileName, const CFSString &szSectionName
 #endif
 
 #endif // WIN32
+*/

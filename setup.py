@@ -3,6 +3,12 @@ from distutils.core import setup, Extension
 import os
 import sys
 
+# detect OS
+if hasattr(os, 'uname'):
+    OSNAME = os.uname()[0]
+else:
+    OSNAME = 'Windows'
+
 def get_sources(src_dir='src', ending='.cpp'):
     '''Function to get a list of files ending with `ending` in `src_dir`.'''
     return [os.path.join(src_dir, fnm) for fnm in os.listdir(src_dir) if fnm.endswith(ending)]
@@ -37,6 +43,11 @@ except ImportError:
     from distutils.command.build_py import build_py
     from distutils.command.build_scripts import build_scripts
 
+# Visual Studio specific args
+extra_link_args = []
+if OSNAME == 'Windows':
+    extra_link_args = ['Advapi32.lib']
+    
 setup(name='pyvabamorf',
     version="1.3",
     description='Python interface for the Vabamorf Estonian lemmatizer and morphological analyzer.',
@@ -57,6 +68,7 @@ setup(name='pyvabamorf',
 
     cmdclass = {'build_py': build_py, 'build_scripts': build_scripts},
     use_2to3=True,
+    extra_link_args = extra_link_args,
 
     ext_modules = [
         Extension('pyvabamorf._vabamorf',

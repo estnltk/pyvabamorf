@@ -2,7 +2,7 @@
 #define POST_FSC_H
 
 #include <assert.h>
-#if defined( WIN32 ) || defined( WIN64 )
+#if defined( _WIN32 ) || defined( _WIN64 )
 #include <fcntl.h>
 #include <io.h>
 #endif

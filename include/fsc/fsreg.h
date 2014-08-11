@@ -1,3 +1,4 @@
+#define _FSREG_H_
 #if !defined _FSREG_H_
 #define _FSREG_H_
 
