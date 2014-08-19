@@ -43,10 +43,33 @@ python -m unittest discover pyvabamorf.test
 PyVabamorf should work with both Python 2.x and Python 3.x versions, although we have tested it
 currently only with Python 2.7 and Python 3.3.
 
+A known bug related to multiprocessing in Windows for Python 2.7, that also fails in one of the unit tests:
+* http://stackoverflow.com/questions/16405687/python-2-7-on-windows-assert-main-name-not-in-sys-modules-main-name-for-all
+* http://bugs.python.org/issue10845
+
+### Windows specifics
+
+In order to build the library with visual studio, you might get an error related to not finding `vcvarsall.bat` file. If you have Visual Studio 2010 installed, execute
+```
+SET VS90COMNTOOLS=%VS100COMNTOOLS%
+```
+or with Visual Studio 2012 installed (Visual Studio Version 11)
+```
+SET VS90COMNTOOLS=%VS110COMNTOOLS%
+```
+or with Visual Studio 2013 installed (Visual Studio Version 12)
+```
+SET VS90COMNTOOLS=%VS120COMNTOOLS%
+```
+See http://stackoverflow.com/questions/2817869/error-unable-to-find-vcvarsall-bat for more details.
 
 ## Binary packages
 
-We plan to release precompiled and easily installable packages for both 32 and 64 bit versions of Linux and Windows.
+All existing binary packages can be found in `dist` folder of the project. Currently there are:
+
+- pyvabamorf-1.3.win32-py2.7.msi
+
+Note to users: if you manage to build a specific version that does not yet exist, feel free to contribute your installer.
 
 # Usage examples
 
@@ -58,6 +81,16 @@ from pyvabamorf import analyze_sentence
 from pprint import pprint
 
 pprint(analyze_sentence('Tüüne öötöömiljöö allmaaraudteejaamas!'.split()))
+```
+
+NB! If you run above in a Windows terminal and it complains about unicode, you can try instead:
+
+```python
+from pyvabamorf import analyze_sentence
+from pprint import pprint
+import sys
+
+pprint(analyze_sentence('Tüüne öötöömiljöö allmaaraudteejaamas!'.decode(sys.stdin.encoding).split()))
 ```
 
 One thing to note about Vabamorf library, is that it yet does not do morphological disambiguation found in commercial
