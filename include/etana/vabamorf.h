@@ -49,10 +49,10 @@ typedef std::vector<std::string> StringVector;
 class Analyzer {
 public:
     Analyzer(std::string const lexPath);
-    std::vector<WordAnalysis> analyze(StringVector const& sentence);
+    std::vector<WordAnalysis> analyze(StringVector const& sentence, bool useHeuristics);
 
 private:
-    void initMorfSettings();
+    void enableHeuristics(bool heuristic);
     void process(CFSArray<CFSVar>& words);
     void compileResults(CFSArray<CFSVar>& words, std::vector<WordAnalysis>& results);
 

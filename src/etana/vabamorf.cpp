@@ -10,12 +10,14 @@ Analysis::Analysis(const Analysis& analysis)
 
 Analyzer::Analyzer(std::string const lexPath) {
     morf.Start(lexPath.c_str(), MF_DFLT_MORFA);
-    initMorfSettings();
+    enableHeuristics(true);
 }
 
-void Analyzer::initMorfSettings() {
+void Analyzer::enableHeuristics(bool heuristics) {
     MRF_FLAGS_BASE_TYPE flags=MF_DFLT_MORFA;
-    flags|=MF_OLETA;
+    if (heuristics) {
+        flags|=MF_OLETA;
+    }
     flags|=MF_KR6NKSA;
     morf.SetFlags(flags);
     morf.SetMaxTasand();
@@ -93,8 +95,8 @@ CFSArray<CFSVar> cfsvarFromStringVector(StringVector const& sentence) {
     return data;
 }
 
-std::vector<WordAnalysis> Analyzer::analyze(StringVector const& sentence) {
-    initMorfSettings();
+std::vector<WordAnalysis> Analyzer::analyze(StringVector const& sentence, bool useHeuristics) {
+    enableHeuristics(useHeuristics);
 
     CFSArray<CFSVar> words = cfsvarFromStringVector(sentence);
     process(words);

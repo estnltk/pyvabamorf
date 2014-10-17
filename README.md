@@ -93,8 +93,7 @@ import sys
 pprint(analyze_sentence('Tüüne öötöömiljöö allmaaraudteejaamas!'.decode(sys.stdin.encoding).split()))
 ```
 
-One thing to note about Vabamorf library, is that it yet does not do morphological disambiguation found in commercial
-version of the library. Therefore the output contains all possible analysis variants.
+One thing to note about Vabamorf library, is that it yet does not do morphological disambiguation. Gossips say, it will be added in future. When it is done, there will also be an option to use it.
 
 Output:
 ```

@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+
+from __future__ import unicode_literals
+
 import pyvabamorf.vabamorf as vm
 import os
 import six
@@ -7,6 +10,9 @@ import warnings
 
 PACKAGE_PATH = os.path.dirname(__file__)
 DICT_PATH = os.path.join(PACKAGE_PATH, 'dct')
+
+markers = ['?', '<', '=', '+', ']', '_']
+tokenize_regex = re.compile('[?<=+\]]')
 
 def convert(word):
     '''This method converts given `word` to appropriate encoding and type to be given to
@@ -29,137 +35,148 @@ def deconvert(word):
     else:
         return word
 
-def deprecated(func):
-    '''This is a decorator which can be used to mark functions
-    as deprecated. It will result in a warning being emitted
-    when the function is used.
-    
-    Code from https://wiki.python.org/moin/PythonDecoratorLibrary#Generating_Deprecation_Warnings
-    '''
-    def new_func(*args, **kwargs):
-        warnings.warn("Call to deprecated function {}.".format(func.__name__),
-                      category=DeprecationWarning)
-        return func(*args, **kwargs)
-    new_func.__name__ = func.__name__
-    new_func.__doc__ = func.__doc__
-    new_func.__dict__.update(func.__dict__)
-    return new_func
-
-def wordtokens(word):
+def tokenize(root):
     '''Function that takes the root form of the word and parses it into tokens.
-       For example '<all_m<aa_r<aud_t<ee_j<aosk<ond' would be parsed as ['all', 'maa', 'raud', 'tee', 'jaos', 'kond']
-       '''
-    if word in [u'?', u'<', u'=', u'+', u']', u'_']: # special case
-        return [word]
-    return re.sub(u'[?<=+\]]', '', word).split('_')
+    For example '<all_m<aa_r<aud_t<ee_j<aosk<ond' would be parsed as ['all', 'maa', 'raud', 'tee', 'jaos', 'kond']
     
+    Parameters
+    ----------
+    root: str
+        The root form of a word.
 
+    Returns
+    -------
+    list of str
+        List of root tokens
+    '''
+    global markers
+    global tokenize_regex
+    if root in markers: # special case
+        return [root]
+    return tokenize_regex.sub('', root).split('_')
+
+def analysis_as_dict(an, clean_root):
+    '''Convert an analysis instance to a dictionary.
+    Also adds "ma" ending to verbs.
+    
+    Parameters
+    ----------
+    an: vabamorf.WordAnalysis
+        Analysis result as returned by vabamorf library.
+    clean_root: boolean
+        If True, then removes extra annotations from root form.
+    
+    Returns
+    -------
+    dict
+        Morfoanalysis results.
+    '''
+    root = an.root
+    toks = tokenize(root)
+    lemma = ''.join(toks)
+    if clean_root:
+        root = lemma
+    if an.partofspeech == 'V':
+        lemma += 'ma'
+    return {'root': deconvert(root),
+            'root_tokens': [deconvert(t) for t in toks],
+            'ending': deconvert(an.ending),
+            'clitic': deconvert(an.clitic),
+            'partofspeech': deconvert(an.partofspeech),
+            'form': deconvert(an.form),
+            'lemma': deconvert(lemma)}
+
+def get_args(**kwargs):
+    '''Check for illegal arguments.
+    
+    Returns
+    -------
+    (boolean, boolean)
+        Settings respectively for use_heuristics and clean_root.
+    '''
+    use_heuristics = True
+    clean_root     = True
+    for key, value in kwargs.items():
+        if key == 'use_heuristics':
+            use_heuristics = bool(value)
+        elif key == 'clean_root':
+            clean_root = bool(value)
+        else:
+            raise Exception('Unkown argument: {0}'.format(key))
+    return (use_heuristics, clean_root)
+            
+                
 class PyVabamorf(object):
     '''Class for performing main tasks of morphological analysis.'''
 
     def __init__(self, lexPath=DICT_PATH):
-        self._analyzer = vm.Analyzer(lexPath)
+        self._analyzer = vm.Analyzer(convert(lexPath))
 
-    def _convert_sentence(self, sentence):
-        '''This method converts the list of strings to appropriate encoding/type, depending
-           on Python version.'''
-        return [convert(word) for word in sentence]
+    def analyze(self, words, **kwargs):
+        '''Perform morphological analysis on input.
+        
+        Parameters
+        ----------
+        words: list of str or str
+            Either a list of pretokenized words or a string. In case of a string, it will be splitted using
+            default behaviour of string.split() function.
+        
+        Keyword parameters
+        ------------------
+        use_heuristics: boolean
+            If True, then use heuristics, when analyzing unknown words (default: True)
+        clean_root: boolean
+            If True, remove extra markers from root form (default: True)
 
-    def _an_to_dict(self, an):
-        '''Convert an analysis to dictionary.'''
-        root = deconvert(an.root)
-        ending = deconvert(an.ending)
-        clitic = deconvert(an.clitic)
-        pos = deconvert(an.partofspeech)
-        form = deconvert(an.form)
-        toks = wordtokens(root)
-        lemma = u''.join(toks)
-        return {'root': root,
-               'ending': ending,
-               'clitic': clitic,
-               'partofspeech': pos,
-               'form': form,
-               'lemma': lemma,
-               'lemma_tokens': toks}
-
-    def analyze_sentence(self, sentence):
-        sentence = self._convert_sentence(sentence)
-        morfresult = self._analyzer.analyze(vm.StringVector(sentence))
+        Returns
+        -------
+        list of (list of dict)
+            List of analysis for each word in input. One word usually contains more than one analysis as the
+            analyser does not perform disambiguation.
+        '''
+        use_heuristics, clean_root = get_args(**kwargs)
+        
+        # if input is a string, then tokenize it with whitespace
+        if isinstance(words, str):
+            words = words.split()
+        
+        # convert words to native string
+        words = [convert(w) for w in words]
+        
+        # perform morphological analysis
+        morfresult = self._analyzer.analyze(vm.StringVector(words), use_heuristics)
         result = []
         for word, analysis in morfresult:
-            analysis = [self._an_to_dict(an) for an in analysis]
+            analysis = [analysis_as_dict(an, clean_root) for an in analysis]
             result.append({'text': deconvert(word),
                            'analysis': analysis})
         return result
     
-    @deprecated
-    def analyze(self, sentence):
-        return self.analyze_sentence(sentence)
+def analyze(words, **kwargs):
+    '''Perform morphological analysis on input.
+    
+    Parameters
+    ----------
+    words: list of str or str
+        Either a list of pretokenized words or a string. In case of a string, it will be splitted using
+        default behaviour of string.split() function.
+    
+    Keyword parameters
+    ------------------
+    use_heuristics: boolean
+        If True, then use heuristics, when analyzing unknown words (default: True)
+    clean_root: boolean
+        If True, remove extra markers from root form (default: True)
 
-def analyze_sentence(sentence):
-    '''Given an list of words, perform lemmatizartion and morphological analysis.
-    
-    Returns a list of dictionaries woth morphological analysis.
-    
-    Example:
-    
-    >>> from pyvabamorf import analyze_sentence
-    >>> from pprint import pprint
-    >>> pprint(analyze_sentence('Tüüne öötöömiljöö allmaaraudteejaamas!'.split()))
-    
-    Output:
-    
-    [{'analysis': [{'clitic': '',
-                    'ending': '0',
-                    'form': 'sg g',
-                    'lemma': 'tüün',
-                    'lemma_tokens': ['tüün'],
-                    'partofspeech': 'A',
-                    'root': 't<üün'},
-                {'clitic': '',
-                    'ending': '0',
-                    'form': 'sg g',
-                    'lemma': 'tüüne',
-                    'lemma_tokens': ['tüüne'],
-                    'partofspeech': 'A',
-                    'root': 't<üüne'},
-                {'clitic': '',
-                    'ending': '0',
-                    'form': 'sg n',
-                    'lemma': 'tüüne',
-                    'lemma_tokens': ['tüüne'],
-                    'partofspeech': 'A',
-                    'root': 't<üüne'}],
-    'text': 'Tüüne'},
-    {'analysis': [{'clitic': '',
-                    'ending': '0',
-                    'form': 'sg g',
-                    'lemma': 'öötöömiljöö',
-                    'lemma_tokens': ['öö', 'töö', 'miljöö'],
-                    'partofspeech': 'S',
-                    'root': '<öö_t<öö_milj<öö'},
-                {'clitic': '',
-                    'ending': '0',
-                    'form': 'sg n',
-                    'lemma': 'öötöömiljöö',
-                    'lemma_tokens': ['öö', 'töö', 'miljöö'],
-                    'partofspeech': 'S',
-                    'root': '<öö_t<öö_milj<öö'}],
-    'text': 'öötöömiljöö'},
-    {'analysis': [{'clitic': '',
-                    'ending': 's',
-                    'form': 'sg in',
-                    'lemma': 'allmaaraudteejaam',
-                    'lemma_tokens': ['all', 'maa', 'raud', 'tee', 'jaam'],
-                    'partofspeech': 'S',
-                    'root': '<all_m<aa_r<aud_t<ee_j<aam'}],
-    'text': 'allmaaraudteejaamas!'}]
+    Returns
+    -------
+    list of (list of dict)
+        List of analysis for each word in input. One word usually contains more than one analysis as the
+        analyser does not perform disambiguation.
     '''
-    # we tie an instance of `PyVabamorf` with `analyze_sentence` function, so this function could be used as
-    # an argument to `multiprocessing.Pool.map` method for example.
-    # It detects if it is called in a subprocess and creates a new `PyVabamorf` instance if necessary.
-    if not hasattr(analyze_sentence, 'pid') or analyze_sentence.pid != os.getpid():
-        analyze_sentence.pid = os.getpid()
-        analyze_sentence.morf = PyVabamorf()
+    if not hasattr(analyze, 'pid') or analyze.pid != os.getpid():
+        analyze.pid = os.getpid()
+        analyze.morf = PyVabamorf()
         
-    return analyze_sentence.morf.analyze_sentence(sentence)
+    return analyze.morf.analyze(words, **kwargs)
+

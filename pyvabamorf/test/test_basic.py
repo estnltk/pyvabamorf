@@ -1,106 +1,138 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
 import unittest
-from pyvabamorf import analyze_sentence
-from pyvabamorf.morf import wordtokens
-
-class TestBasic(unittest.TestCase):
-    
-    def test_analyze_sentence(self):
-        res = analyze_sentence(self.analyze_input())
-        self.assertListEqual(res, self.analyze_result())
-    
-    def test_nonunicode_analuze_fails(self):
-        self.assertRaises(Exception, analyze_sentence, (self.invalid_analyze_input()))
-
-    def test_empty_input_yields_empty_output(self):
-        self.assertEqual(len(analyze_sentence([])), 0)
-    
-    def analyze_input(self):
-        return u'Tüüne öötöömiljöö allmaaraudteejaamas!'.split()
-    
-    def invalid_analyze_input(self):
-        return u'Tüüne öötöömiljöö allmaaraudteejaamas!'.encode('latin-1').split()
-    
-    def analyze_result(self):
-        return [{'analysis': [{'clitic': u'',
-                        'ending': u'0',
-                        'form': u'sg g',
-                        'lemma': u'tüün',
-                        'lemma_tokens': [u'tüün'],
-                        'partofspeech': u'A',
-                        'root': u't<üün'},
-                    {'clitic': u'',
-                        'ending': u'0',
-                        'form': u'sg g',
-                        'lemma': u'tüüne',
-                        'lemma_tokens': [u'tüüne'],
-                        'partofspeech': u'A',
-                        'root': u't<üüne'},
-                    {'clitic': u'',
-                        'ending': u'0',
-                        'form': u'sg n',
-                        'lemma': u'tüüne',
-                        'lemma_tokens': [u'tüüne'],
-                        'partofspeech': u'A',
-                        'root': u't<üüne'}],
-        'text': u'Tüüne'},
-        {'analysis': [{'clitic': u'',
-                        'ending': u'0',
-                        'form': u'sg g',
-                        'lemma': u'öötöömiljöö',
-                        'lemma_tokens': [u'öö', u'töö', u'miljöö'],
-                        'partofspeech': u'S',
-                        'root': u'<öö_t<öö_milj<öö'},
-                    {'clitic': u'',
-                        'ending': u'0',
-                        'form': u'sg n',
-                        'lemma': u'öötöömiljöö',
-                        'lemma_tokens': [u'öö', u'töö', u'miljöö'],
-                        'partofspeech': u'S',
-                        'root': u'<öö_t<öö_milj<öö'}],
-        'text': u'öötöömiljöö'},
-        {'analysis': [{'clitic': u'',
-                        'ending': u's',
-                        'form': u'sg in',
-                        'lemma': u'allmaaraudteejaam',
-                        'lemma_tokens': [u'all', u'maa', u'raud', u'tee', u'jaam'],
-                        'partofspeech': u'S',
-                        'root': u'<all_m<aa_r<aud_t<ee_j<aam'}],
-        'text': u'allmaaraudteejaamas!'}]
+from pyvabamorf import analyze
+from pyvabamorf.morf import tokenize, analysis_as_dict, convert, deconvert
+from pyvabamorf.vabamorf import Analysis
 
 
-class TestWordTokens(unittest.TestCase):
+class Tokenizetest(unittest.TestCase):
     '''Testcase for removal of wierd helper characters in vabamorf output.'''
 
     def test_intsident(self):
-        tokens = wordtokens(u'?intsiden]t')
-        self.assertListEqual(tokens, [u'intsident'])
+        tokens = tokenize('?intsiden]t')
+        self.assertListEqual(tokens, ['intsident'])
 
     def test_edastatud(self):
-        tokens = wordtokens(u'edasta=tud')
-        self.assertListEqual(tokens, [u'edastatud'])
+        tokens = tokenize('edasta=tud')
+        self.assertListEqual(tokens, ['edastatud'])
 
     def test_withall(self):
-        tokens = wordtokens(u'all_+maa_raud]_tee_jaam?')
-        self.assertListEqual(tokens, [u'all', u'maa', u'raud', u'tee', u'jaam'])
+        tokens = tokenize('all_+maa_raud]_tee_jaam?')
+        self.assertListEqual(tokens, ['all', 'maa', 'raud', 'tee', 'jaam'])
         
     def test_underscore(self):
-        tokens = wordtokens(u'_')
-        self.assertListEqual(tokens, [u'_'])
+        tokens = tokenize('_')
+        self.assertListEqual(tokens, ['_'])
         
     def test_plus(self):
-        tokens = wordtokens(u'+')
-        self.assertListEqual(tokens, [u'+'])
+        tokens = tokenize('+')
+        self.assertListEqual(tokens, ['+'])
         
     def test_equalmark(self):
-        tokens = wordtokens(u'=')
-        self.assertListEqual(tokens, [u'='])
+        tokens = tokenize('=')
+        self.assertListEqual(tokens, ['='])
     
     def test_ltmark(self):
-        tokens = wordtokens(u'<')
-        self.assertListEqual(tokens, [u'<'])
+        tokens = tokenize('<')
+        self.assertListEqual(tokens, ['<'])
    
     def test_bracketclose(self):
-        tokens = wordtokens(u']')
-        self.assertListEqual(tokens, [u']'])
+        tokens = tokenize(']')
+        self.assertListEqual(tokens, [']'])
 
+
+class AnalysisAsDictTest(unittest.TestCase):
+    
+    def test_verb_nocleanroot(self):
+        self.assertDictEqual(analysis_as_dict(self.verb(), False), self.verb_nocleanroot())
+    
+    def test_verb_cleanroot(self):
+        self.assertDictEqual(analysis_as_dict(self.verb(), True), self.verb_nocleanroot())
+    
+    def test_substantive_nocleanroot(self):
+        self.assertDictEqual(analysis_as_dict(self.substantive(), False), self.substantive_nocleanroot())
+    
+    def test_substantive_cleanroot(self):
+        self.assertDictEqual(analysis_as_dict(self.substantive(), True), self.substantive_cleanroot())
+    
+    def verb(self):
+        return Analysis(convert('l<aul'),
+                        convert('b'),
+                        convert(''),
+                        convert('V'),
+                        convert('b'))
+    
+    def substantive(self):
+        return Analysis(convert('lennuki_k<an]dja'),
+                        convert('ile'),
+                        convert(''),
+                        convert('S'),
+                        convert('pl all'))
+
+    def verb_nocleanroot(self):
+        return {'clitic': '',
+                'ending': 'b',
+                'form': 'b',
+                'lemma': 'laulma',
+                'partofspeech': 'V',
+                'root_tokens': ['laul'],
+                'root': 'l<aul'}
+    
+    def verb_cleanroot(self):
+        return {'clitic': '',
+                'ending': 'b',
+                'form': 'b',
+                'lemma': 'laulma',
+                'partofspeech': 'V',
+                'root_tokens': ['laul'],
+                'root': 'laul'}
+
+    def substantive_nocleanroot(self):
+        return {'clitic': '',
+                'ending': 'ile',
+                'form': 'pl all',
+                'lemma': 'lennukikandja',
+                'partofspeech': 'S',
+                'root_tokens': ['lennuki', 'kandja'],
+                'root': 'lennuki_k<an]dja'}
+
+    def substantive_cleanroot(self):
+        return {'clitic': '',
+                'ending': 'ile',
+                'form': 'pl all',
+                'lemma': 'lennukikandja',
+                'partofspeech': 'S',
+                'root_tokens': ['lennuki', 'kandja'],
+                'root': 'lennukikandja'}
+
+                
+class TextIsSameAsListTest(unittest.TestCase):
+    
+    def test_text_is_same(self):
+        for use_heuristics in [False, True]:
+            for clean_root in [False, True]:
+                text_output = analyze(self.text(),
+                                      use_heuristics=use_heuristics,
+                                      clean_root=clean_root)
+                list_output = analyze(self.text().split(),
+                                      use_heuristics=use_heuristics,
+                                      clean_root=clean_root)
+                self.assertDictEqual(text_output, list_output)
+    
+    def text(self):
+        # http://luuletused.ee/1005/elu/hetke-volu
+        return '''Ma tahaks suudelda päikesekiiri 
+                vat nii ihalevad mu huuled päikese suule.. 
+                Ma tahaks tantsida kesksuvises vihmas 
+                vat nii tunglevad minu tunded südames suures 
+
+                Keegi kord ütles, et ära karda 
+                armastus saab aja jooksul ainult kasvada 
+                Võta kõik vastu, mis sulle pakutakse, 
+                sest see, mis sulle antakse 
+                on sinu jaoks loodud'''
+
+if __name__ == '__main__':
+    unittest.main()

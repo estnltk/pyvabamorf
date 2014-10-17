@@ -39,9 +39,9 @@ except ImportError:
 
     
 setup(name='pyvabamorf',
-    version="1.3",
+    version="1.4",
     description='Python interface for the Vabamorf Estonian lemmatizer and morphological analyzer.',
-    author='Tarmo Vaino, Heiki-Jaan Kaalep, Sven Laur, Timo Petmanson, Aleksandr Tkachenko, Siim Orasmaa',
+    author='Tarmo Vaino, Heiki-Jaan Kaalep, Sven Laur, Timo Petmanson, Aleksandr Tkachenko, Siim Orasmaa, Raul Sirel',
     author_email='tpetmanson@gmail.com',
     url='https://github.com/brainscauseminds/pyvabamorf',
     classifiers = ['Intended Audience :: Developers',
