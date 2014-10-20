@@ -40,8 +40,7 @@ Then run the tests and see if they all pass (NB! Don't run them from same direct
 python -m unittest discover pyvabamorf.test
 ```
 
-PyVabamorf should work with both Python 2.x and Python 3.x versions, although we have tested it
-currently only with Python 2.7 and Python 3.3.
+PyVabamorf works with Python 2.7 and Python 3.4 versions. It might work with other versions as well, but we have not tested this.
 
 A known bug related to multiprocessing in Windows for Python 2.7, that also fails in one of the unit tests:
 * http://stackoverflow.com/questions/16405687/python-2-7-on-windows-assert-main-name-not-in-sys-modules-main-name-for-all

@@ -71,20 +71,20 @@ def analysis_as_dict(an, clean_root):
     dict
         Morfoanalysis results.
     '''
-    root = an.root
+    root = deconvert(an.root)
     toks = tokenize(root)
     lemma = ''.join(toks)
     if clean_root:
         root = lemma
     if an.partofspeech == 'V':
         lemma += 'ma'
-    return {'root': deconvert(root),
-            'root_tokens': [deconvert(t) for t in toks],
+    return {'root': root,
+            'root_tokens': toks,
             'ending': deconvert(an.ending),
             'clitic': deconvert(an.clitic),
             'partofspeech': deconvert(an.partofspeech),
             'form': deconvert(an.form),
-            'lemma': deconvert(lemma)}
+            'lemma': lemma}
 
 def get_args(**kwargs):
     '''Check for illegal arguments.
@@ -137,7 +137,7 @@ class PyVabamorf(object):
         use_heuristics, clean_root = get_args(**kwargs)
         
         # if input is a string, then tokenize it with whitespace
-        if isinstance(words, str):
+        if isinstance(words, six.string_types):
             words = words.split()
         
         # convert words to native string

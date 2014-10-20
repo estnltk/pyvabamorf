@@ -5,7 +5,7 @@ import unittest
 from pyvabamorf import analyze
 from pyvabamorf.morf import tokenize, analysis_as_dict, convert, deconvert
 from pyvabamorf.vabamorf import Analysis
-
+from pprint import pprint
 
 class Tokenizetest(unittest.TestCase):
     '''Testcase for removal of wierd helper characters in vabamorf output.'''
@@ -49,7 +49,7 @@ class AnalysisAsDictTest(unittest.TestCase):
         self.assertDictEqual(analysis_as_dict(self.verb(), False), self.verb_nocleanroot())
     
     def test_verb_cleanroot(self):
-        self.assertDictEqual(analysis_as_dict(self.verb(), True), self.verb_nocleanroot())
+        self.assertDictEqual(analysis_as_dict(self.verb(), True), self.verb_cleanroot())
     
     def test_substantive_nocleanroot(self):
         self.assertDictEqual(analysis_as_dict(self.substantive(), False), self.substantive_nocleanroot())
@@ -110,16 +110,26 @@ class AnalysisAsDictTest(unittest.TestCase):
                 
 class TextIsSameAsListTest(unittest.TestCase):
     
-    def test_text_is_same(self):
-        for use_heuristics in [False, True]:
-            for clean_root in [False, True]:
-                text_output = analyze(self.text(),
-                                      use_heuristics=use_heuristics,
-                                      clean_root=clean_root)
-                list_output = analyze(self.text().split(),
-                                      use_heuristics=use_heuristics,
-                                      clean_root=clean_root)
-                self.assertDictEqual(text_output, list_output)
+    def test_text_is_same_no_heuristics_noclean_root(self):
+        self.run_test(False, False)
+        
+    def test_text_is_same_heuristics_noclean_tooy(self):
+        self.run_test(True, False)
+
+    def test_text_is_same_no_heuristics_clean_root(self):
+        self.run_test(False, True)
+        
+    def test_text_is_same_heuristics_clean_tooy(self):
+        self.run_test(True, True)
+    
+    def run_test(self, use_heuristics, clean_root):
+        text_output = analyze(self.text(),
+                                use_heuristics=use_heuristics,
+                                clean_root=clean_root)
+        list_output = analyze(self.text().split(),
+                                use_heuristics=use_heuristics,
+                                clean_root=clean_root)
+        self.assertListEqual(text_output, list_output)
     
     def text(self):
         # http://luuletused.ee/1005/elu/hetke-volu
@@ -134,5 +144,7 @@ class TextIsSameAsListTest(unittest.TestCase):
                 sest see, mis sulle antakse 
                 on sinu jaoks loodud'''
 
+
+                
 if __name__ == '__main__':
     unittest.main()
