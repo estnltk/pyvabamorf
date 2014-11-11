@@ -159,7 +159,7 @@ def get_group_tokens(root):
 
 def get_lemma(grouptoks, partofspeech):
     lemma = '-'.join([''.join(gr) for gr in grouptoks])
-    if partofspeech == 'V':
+    if partofspeech == 'V' and lemma not in ['ei', 'ära']:
         lemma += 'ma'
     return lemma
 
