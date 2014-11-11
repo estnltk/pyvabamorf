@@ -18,6 +18,8 @@ void Analyzer::enableHeuristics(bool heuristics) {
     if (heuristics) {
         flags|=MF_OLETA;
     }
+    // always add phonetic markup
+    // we will trim it in python module, when necessary
     flags|=MF_KR6NKSA;
     morf.SetFlags(flags);
     morf.SetMaxTasand();

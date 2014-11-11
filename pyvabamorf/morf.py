@@ -116,22 +116,22 @@ def trim_compounds(root):
     else:
         return compound_regex.sub('', root)
 
-def get_root(root, trim_phonetic, trim_compound):
+def get_root(root, phonetic, compound):
     '''Get the root form without markers.
     
     Parameters
     ----------
     root: str
         The word root form.
-    trim_phonetic: boolean
-        If True, then removes phonetic annotations from root form. (default: True)
-    trim_compound: boolean
-        If True, then removes compund word annotations from root form. (default: True)
+    phonetic: boolean
+        If True, add phonetic information to the root forms.
+    compound: boolean
+        if True, add compound word markers to root forms.
     '''
     global compound_regex
-    if trim_phonetic:
+    if not phonetic:
         root = trim_phonetics(root)
-    if trim_compound:
+    if not compound:
         root = trim_compounds(root)
     return root
 
@@ -209,19 +209,19 @@ def get_args(**kwargs):
     (boolean, boolean, boolean)
         Use heuristics, clean phonetics, clean compound.
     '''
-    use_heuristics = True
-    trim_phonetic = True
-    trim_compound = True
+    guess = True
+    phonetic = True
+    compound = True
     for key, value in kwargs.items():
-        if key == 'use_heuristics':
-            use_heuristics = bool(value)
-        elif key == 'trim_phonetic':
-            trim_phonetic = bool(value)
-        elif key == 'trim_compound':
-            trim_compound = bool(value)
+        if key == 'guess':
+            guess = bool(value)
+        elif key == 'phonetic':
+            phonetic = bool(value)
+        elif key == 'compound':
+            compound = bool(value)
         else:
             raise Exception('Unkown argument: {0}'.format(key))
-    return (use_heuristics, trim_phonetic, trim_compound)
+    return (guess, phonetic, compound)
             
                 
 class PyVabamorf(object):
@@ -241,12 +241,12 @@ class PyVabamorf(object):
         
         Keyword parameters
         ------------------
-        use_heuristics: boolean
-            If True, then use heuristics, when analyzing unknown words (default: True)
-        trim_phonetic: boolean
-            If True, then removes phonetic annotations from root form. (default: True)
-        trim_compound: boolean
-            If True, then removes compund word annotations from root form. (default: True)
+        guess: boolean
+            If True, then use guessing, when analyzing unknown words (default: True)
+        phonetic: boolean
+            If True, add phonetic information to the root forms (default: True).
+        compound: boolean
+            if True, add compound word markers to root forms (default: True)
 
         Returns
         -------
@@ -254,7 +254,7 @@ class PyVabamorf(object):
             List of analysis for each word in input. One word usually contains more than one analysis as the
             analyser does not perform disambiguation.
         '''
-        use_heuristics, trim_phonetic, trim_compound = get_args(**kwargs)
+        guess, phonetic, compound = get_args(**kwargs)
         
         # if input is a string, then tokenize it with whitespace
         if isinstance(words, six.string_types):
@@ -264,10 +264,10 @@ class PyVabamorf(object):
         words = [convert(w) for w in words]
         
         # perform morphological analysis
-        morfresult = self._analyzer.analyze(vm.StringVector(words), use_heuristics)
+        morfresult = self._analyzer.analyze(vm.StringVector(words), guess)
         result = []
         for word, analysis in morfresult:
-            analysis = [analysis_as_dict(an, trim_phonetic, trim_compound) for an in analysis]
+            analysis = [analysis_as_dict(an, phonetic, compound) for an in analysis]
             result.append({'text': deconvert(word),
                            'analysis': analysis})
         return result
@@ -283,12 +283,12 @@ def analyze(words, **kwargs):
     
     Keyword parameters
     ------------------
-    use_heuristics: boolean
-        If True, then use heuristics, when analyzing unknown words (default: True)
-    trim_phonetic: boolean
-        If True, then removes phonetic annotations from root form. (default: True)
-    trim_compound: boolean
-        If True, then removes compund word annotations from root form. (default: True)
+    guess: boolean
+        If True, then use guessing, when analyzing unknown words (default: True)
+    phonetic: boolean
+        If True, add phonetic information to the root forms (default: True).
+    compound: boolean
+        if True, add compound word markers to root forms (default: True)
 
     Returns
     -------

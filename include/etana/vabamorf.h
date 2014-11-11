@@ -60,8 +60,21 @@ private:
 };
 
 
-/*class Speller {
-    Speller(std::string const lexPath);  
-};*/
+/** Morphological synthesizer.
+ * 
+ * Simple wrapper of ETMRFAS class for doing morphological synthesis.
+ */
 
+/*
+class Syntesizer {
+public:
+    Synthesizer();
+    std::string synthesize(std::string lemma,
+                           std::string partofspeech,
+                           std::string form,
+                           std::string hint,
+                           bool guess,
+                           bool phon);
+}
+*/
 #endif

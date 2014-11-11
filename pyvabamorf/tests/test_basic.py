@@ -67,21 +67,21 @@ class TokensTest(unittest.TestCase):
 
 class AnalysisAsDictTest(unittest.TestCase):
     
-    def test_verb(self):
-        self.assertDictEqual(analysis_as_dict(self.verbanalysis(), False, False),
-                             self.verb())
-    
-    def test_verb_phonetic(self):
-        self.assertDictEqual(analysis_as_dict(self.verbanalysis(), True, False),
-                             self.verb_phonetic())
+    def test_verb_phonetic_compound(self):
+        self.assertDictEqual(analysis_as_dict(self.verbanalysis(), True, True),
+                             self.verb_phonetic_compound())
     
     def test_verb_compound(self):
         self.assertDictEqual(analysis_as_dict(self.verbanalysis(), False, True),
                              self.verb_compound())
     
-    def test_verb_phonetic_compound(self):
-        self.assertDictEqual(analysis_as_dict(self.verbanalysis(), True, True),
-                             self.verb_phonetic_compound())
+    def test_verb_phonetic(self):
+        self.assertDictEqual(analysis_as_dict(self.verbanalysis(), True, False),
+                             self.verb_phonetic())
+    
+    def test_verb(self):
+        self.assertDictEqual(analysis_as_dict(self.verbanalysis(), False, False),
+                             self.verb())
                              
     def test_verb_default_args(self):
         self.assertDictEqual(analysis_as_dict(self.verbanalysis()),
@@ -94,7 +94,7 @@ class AnalysisAsDictTest(unittest.TestCase):
                         convert('V'),
                         convert('b'))
     
-    def verb(self):
+    def verb_phonetic_compound(self):
         return {'clitic': '',
                 'ending': 'b',
                 'form': 'b',
@@ -103,7 +103,7 @@ class AnalysisAsDictTest(unittest.TestCase):
                 'root_tokens': ['laul'],
                 'root': 'l<aul'}
     
-    def verb_phonetic(self):
+    def verb_compound(self):
         return {'clitic': '',
                 'ending': 'b',
                 'form': 'b',
@@ -112,7 +112,7 @@ class AnalysisAsDictTest(unittest.TestCase):
                 'root_tokens': ['laul'],
                 'root': 'laul'}
                 
-    def verb_compound(self):
+    def verb_phonetic(self):
         return {'clitic': '',
                 'ending': 'b',
                 'form': 'b',
@@ -121,7 +121,7 @@ class AnalysisAsDictTest(unittest.TestCase):
                 'root_tokens': ['laul'],
                 'root': 'l<aul'}
 
-    def verb_phonetic_compound(self):
+    def verb(self):
         return {'clitic': '',
                 'ending': 'b',
                 'form': 'b',
@@ -137,27 +137,27 @@ class AnalysisAsDictTest(unittest.TestCase):
                         convert('S'),
                         convert('pl all'))
 
-    def test_substantive(self):
-        self.assertDictEqual(analysis_as_dict(self.substantiveanalysis(), False, False),
-                             self.substantive())
-    
-    def test_substantive_phonetic(self):
-        self.assertDictEqual(analysis_as_dict(self.substantiveanalysis(), True, False),
-                             self.substantive_phonetic())
+    def test_substantive_phonetic_compound(self):
+        self.assertDictEqual(analysis_as_dict(self.substantiveanalysis(), True, True),
+                             self.substantive_phonetic_compound())
     
     def test_substantive_compound(self):
         self.assertDictEqual(analysis_as_dict(self.substantiveanalysis(), False, True),
                              self.substantive_compound())
     
-    def test_substantive_phonetic_compound(self):
-        self.assertDictEqual(analysis_as_dict(self.substantiveanalysis(), True, True),
-                             self.substantive_phonetic_compound())
-
+    def test_substantive_phonetic(self):
+        self.assertDictEqual(analysis_as_dict(self.substantiveanalysis(), True, False),
+                             self.substantive_phonetic())
+    
+    def test_substantive(self):
+        self.assertDictEqual(analysis_as_dict(self.substantiveanalysis(), False, False),
+                             self.substantive())
+                             
     def test_substantive_default_args(self):
         self.assertDictEqual(analysis_as_dict(self.substantiveanalysis()),
                              self.substantive_phonetic_compound())
 
-    def substantive(self):
+    def substantive_phonetic_compound(self):
         return {'clitic': '',
                 'ending': 'ile',
                 'form': 'pl all',
@@ -166,7 +166,7 @@ class AnalysisAsDictTest(unittest.TestCase):
                 'root_tokens': ['lennuki', 'kandja'],
                 'root': 'lennuki_k<an]dja'}
 
-    def substantive_phonetic(self):
+    def substantive_compound(self):
         return {'clitic': '',
                 'ending': 'ile',
                 'form': 'pl all',
@@ -175,7 +175,7 @@ class AnalysisAsDictTest(unittest.TestCase):
                 'root_tokens': ['lennuki', 'kandja'],
                 'root': 'lennuki_kandja'}
                 
-    def substantive_compound(self):
+    def substantive_phonetic(self):
         return {'clitic': '',
                 'ending': 'ile',
                 'form': 'pl all',
@@ -184,7 +184,7 @@ class AnalysisAsDictTest(unittest.TestCase):
                 'root_tokens': ['lennuki', 'kandja'],
                 'root': 'lennukik<an]dja'}
                 
-    def substantive_phonetic_compound(self):
+    def substantive(self):
         return {'clitic': '',
                 'ending': 'ile',
                 'form': 'pl all',
@@ -194,16 +194,12 @@ class AnalysisAsDictTest(unittest.TestCase):
                 'root': 'lennukikandja'}
                 
                 
-    def test_hyphen_grouping(self):
-        self.assertDictEqual(analysis_as_dict(self.substantiveanalysis()),
-                             self.substantive_phonetic_compound())
-                
 class TextIsSameAsListTest(unittest.TestCase):
     
     def test_same(self):
         self.run_test(False, False, False)
         
-    def test_same_heuristics(self):
+    def test_same_guess(self):
         self.run_test(True, False, False)
     
     def test_same_phonetic(self):
@@ -221,15 +217,15 @@ class TextIsSameAsListTest(unittest.TestCase):
     def test_same_phonetic_compound(self):
         self.run_test(False, True, True)
     
-    def run_test(self, use_heuristics, trim_phonetic, trim_compound):
+    def run_test(self, guess, phonetic, compound):
         text_output = analyze(self.text(),
-                                use_heuristics=use_heuristics,
-                                trim_phonetic=trim_phonetics,
-                                trim_compound=trim_compound)
+                              guess=guess,
+                              phonetic=phonetic,
+                              compound=compound )
         list_output = analyze(self.text().split(),
-                                use_heuristics=use_heuristics,
-                                trim_phonetic=trim_phonetics,
-                                trim_compound=trim_compound)
+                              guess=guess,
+                              phonetic=phonetic,
+                              compound=compound )
         self.assertListEqual(text_output, list_output)
     
     def text(self):
