@@ -56,7 +56,7 @@ setup(name='pyvabamorf',
                   include_dirs=include_dirs)
         ],
 
-    packages = ['pyvabamorf', 'pyvabamorf.test'],
+    packages = ['pyvabamorf', 'pyvabamorf.tests'],
     package_dir = {'pyvabamorf': 'pyvabamorf',
                    'pyvabamorf.test': os.path.join('pyvabamorf', 'tests')},
     package_data = {'pyvabamorf': [os.path.join('dct', 'et.dct')]}
