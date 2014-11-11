@@ -307,5 +307,19 @@ class Analyzer(object):
 Analyzer_swigregister = _vabamorf.Analyzer_swigregister
 Analyzer_swigregister(Analyzer)
 
+class Synthesizer(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def __init__(self, *args): 
+        this = _vabamorf.new_Synthesizer(*args)
+        try: self.this.append(this)
+        except: self.this = this
+    def updateSettings(self, *args): return _vabamorf.Synthesizer_updateSettings(self, *args)
+    def synthesize(self, *args): return _vabamorf.Synthesizer_synthesize(self, *args)
+    __swig_destroy__ = _vabamorf.delete_Synthesizer
+    __del__ = lambda self : None;
+Synthesizer_swigregister = _vabamorf.Synthesizer_swigregister
+Synthesizer_swigregister(Synthesizer)
+
 
 

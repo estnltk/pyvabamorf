@@ -109,3 +109,59 @@ std::vector<WordAnalysis> Analyzer::analyze(StringVector const& sentence, bool u
 
     return results;
 }
+
+
+
+Synthesizer::Synthesizer(std::string const lexPath) {
+    morf.Start(lexPath.c_str(), MF_DFLT_MORFA);
+}
+
+void Synthesizer::updateSettings(bool guess, bool phon) {
+    MRF_FLAGS_BASE_TYPE flags=MF_DFLT_MORFA;
+    if (guess) {
+        flags|=MF_OLETA;
+    }
+    if (phon) {
+        flags|=MF_KR6NKSA;
+    }
+    morf.SetFlags(flags);
+    morf.Clr();
+}
+
+std::string
+Synthesizer::synthesize(std::string lemma,
+                        std::string partofspeech,
+                        std::string form,
+                        std::string hint,
+                        bool guess,
+                        bool phon)
+{
+    updateSettings(guess, phon);
+        
+    CFSVar word;
+    word.Cast(CFSVar::VAR_MAP);
+    word["lemma"] = lemma.c_str();
+    word["partofspeech"] = partofspeech.c_str();
+    word["form"] = form.c_str();
+    word["hint"] = hint.c_str();
+    word["text"] = "";
+
+    MRFTUL Input;
+    Input.tyvi=word["lemma"].GetWString();
+    Input.sl=word["partofspeech"].GetWString();
+    if (Input.sl.IsEmpty()) Input.sl=FSWSTR("*");
+    Input.vormid=word["form"].GetWString();
+    CFSWString szHint=word["hint"].GetWString();
+
+    morf.Clr();
+    MRFTULEMUSED Result;
+    if (morf.Synt(Result, Input, szHint) && Result.on_tulem()) {
+        CFSVar Text;
+        Text.Cast(CFSVar::VAR_ARRAY);
+        for (INTPTR ipRes=0; Result[ipRes]; ipRes++){
+            Text[ipRes]=Result[ipRes]->tyvi+Result[ipRes]->lopp+Result[ipRes]->kigi;
+        }
+        word["text"]=Text;
+    }
+    return std::string(word["text"].GetAString());
+}

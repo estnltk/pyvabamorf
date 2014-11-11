@@ -64,17 +64,18 @@ private:
  * 
  * Simple wrapper of ETMRFAS class for doing morphological synthesis.
  */
-
-/*
-class Syntesizer {
+class Synthesizer {
 public:
-    Synthesizer();
+    Synthesizer(std::string const lexPath);
+    void updateSettings(bool guess, bool phon);
     std::string synthesize(std::string lemma,
                            std::string partofspeech,
                            std::string form,
                            std::string hint,
                            bool guess,
                            bool phon);
-}
-*/
+private:
+    ETMRFAS morf;
+};
+
 #endif

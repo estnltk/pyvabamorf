@@ -229,6 +229,7 @@ class PyVabamorf(object):
 
     def __init__(self, lexPath=DICT_PATH):
         self._analyzer = vm.Analyzer(convert(lexPath))
+        self._synthesizer = vm.Synthesizer(convert(lexPath))
 
     def analyze(self, words, **kwargs):
         '''Perform morphological analysis on input.
@@ -271,6 +272,32 @@ class PyVabamorf(object):
             result.append({'text': deconvert(word),
                            'analysis': analysis})
         return result
+        
+    def synthesize(self, lemma, partofspeech, form, hint='', guess=True, phon=True):
+        '''Given lemma, pos tag and a form, synthesize the word.
+        
+        Parameters
+        ----------
+        lemma: str
+            The lemma of the word to be synthesized.
+        partofspeech: str
+            The POS tag of the word to be synthesized.
+        form: str
+            The form of the word to be synthesized.
+        hint: str
+            The hint used by vabamorf to synthesize the word.
+        guess: bool
+            If True, use guessing for unknown words (default: True)
+        phon: bool
+            If True, add phonetic markers to synthesized words (default: True).
+        '''
+        word = self._synthesizer.synthesize(convert(lemma),
+                                            convert(partofspeech),
+                                            convert(form),
+                                            convert(hint),
+                                            guess,
+                                            phon)
+        return deconvert(word)
     
 def analyze(words, **kwargs):
     '''Perform morphological analysis on input.
