@@ -225,11 +225,37 @@ def get_args(**kwargs):
             
                 
 class PyVabamorf(object):
-    '''Class for performing main tasks of morphological analysis.'''
+    '''Class for performing main tasks of morphological analysis.
+    
+    Attributes
+    ----------
+    pid: int
+        Current process id.
+    morf: PyVabamorf
+        instance of the PyVabamorf class.
+    '''
 
     def __init__(self, lexPath=DICT_PATH):
+        '''Initialize PyVabamorf class.
+        
+        NB! Do not use this class directly. Instead use
+        PyVabamorf.instance() to obtain access to one.
+        '''
         self._analyzer = vm.Analyzer(convert(lexPath))
         self._synthesizer = vm.Synthesizer(convert(lexPath))
+
+    @staticmethod
+    def instance():
+        '''Return an PyVabamorf instance.
+        
+        It returns the previously initialized instance or creates a new
+        one if nothing exists. Also creates new instance in case the
+        process has been forked.
+        '''
+        if not hasattr(PyVabamorf, 'pid') or PyVabamorf.pid != os.getpid():
+            PyVabamorf.pid = os.getpid()
+            PyVabamorf.morf = PyVabamorf()
+        return PyVabamorf.morf
 
     def analyze(self, words, **kwargs):
         '''Perform morphological analysis on input.
@@ -273,13 +299,16 @@ class PyVabamorf(object):
                            'analysis': analysis})
         return result
         
-    def synthesize(self, lemma, partofspeech, form, hint='', guess=True, phon=True):
+    def synthesize(self, lemma, partofspeech='', form='', hint='', guess=True, phonetic=True):
         '''Given lemma, pos tag and a form, synthesize the word.
         
         Parameters
         ----------
         lemma: str
             The lemma of the word to be synthesized.
+            
+        Keyword parameters
+        ------------------
         partofspeech: str
             The POS tag of the word to be synthesized.
         form: str
@@ -288,17 +317,23 @@ class PyVabamorf(object):
             The hint used by vabamorf to synthesize the word.
         guess: bool
             If True, use guessing for unknown words (default: True)
-        phon: bool
+        phonetic: bool
             If True, add phonetic markers to synthesized words (default: True).
+            
+        Returns
+        -------
+        list of str
+            The list of synthesized words.
         '''
-        word = self._synthesizer.synthesize(convert(lemma),
-                                            convert(partofspeech),
-                                            convert(form),
-                                            convert(hint),
-                                            guess,
-                                            phon)
-        return deconvert(word)
-    
+        words = self._synthesizer.synthesize(convert(lemma),
+                                             convert(partofspeech),
+                                             convert(form),
+                                             convert(hint),
+                                             guess,
+                                             phonetic)
+        return [deconvert(word) for word in words]
+
+
 def analyze(words, **kwargs):
     '''Perform morphological analysis on input.
     
@@ -323,9 +358,33 @@ def analyze(words, **kwargs):
         List of analysis for each word in input. One word usually contains more than one analysis as the
         analyser does not perform disambiguation.
     '''
-    if not hasattr(analyze, 'pid') or analyze.pid != os.getpid():
-        analyze.pid = os.getpid()
-        analyze.morf = PyVabamorf()
-        
-    return analyze.morf.analyze(words, **kwargs)
+    return PyVabamorf.instance().analyze(words, **kwargs)
 
+
+def synthesize(lemma, **kwargs):
+    '''Given lemma, pos tag and a form, synthesize the word.
+
+    Parameters
+    ----------
+    lemma: str
+        The lemma of the word to be synthesized.
+        
+    Keyword parameters
+    ------------------
+    partofspeech: str
+        The POS tag of the word to be synthesized.
+    form: str
+        The form of the word to be synthesized.
+    hint: str
+        The hint used by vabamorf to synthesize the word.
+    guess: bool
+        If True, use guessing for unknown words (default: True)
+    phonetic: bool
+        If True, add phonetic markers to synthesized words (default: True).
+        
+    Returns
+    -------
+    list of str
+        The list of synthesized words.
+    '''
+    return PyVabamorf.instance().synthesize(lemma, **kwargs)

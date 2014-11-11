@@ -128,7 +128,7 @@ void Synthesizer::updateSettings(bool guess, bool phon) {
     morf.Clr();
 }
 
-std::string
+std::vector<std::string>
 Synthesizer::synthesize(std::string lemma,
                         std::string partofspeech,
                         std::string form,
@@ -144,7 +144,6 @@ Synthesizer::synthesize(std::string lemma,
     word["partofspeech"] = partofspeech.c_str();
     word["form"] = form.c_str();
     word["hint"] = hint.c_str();
-    word["text"] = "";
 
     MRFTUL Input;
     Input.tyvi=word["lemma"].GetWString();
@@ -162,6 +161,13 @@ Synthesizer::synthesize(std::string lemma,
             Text[ipRes]=Result[ipRes]->tyvi+Result[ipRes]->lopp+Result[ipRes]->kigi;
         }
         word["text"]=Text;
+        CFSVar text = word["text"];
+        std::vector<std::string> result;
+        result.reserve(text.GetSize());
+        for (int i=0 ; i<text.GetSize() ; ++i) {
+            result.push_back(std::string(text[i].GetAString()));
+        }
+        return result;
     }
-    return std::string(word["text"].GetAString());
+    return std::vector<std::string>();
 }

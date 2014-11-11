@@ -314,7 +314,6 @@ class Synthesizer(object):
         this = _vabamorf.new_Synthesizer(*args)
         try: self.this.append(this)
         except: self.this = this
-    def updateSettings(self, *args): return _vabamorf.Synthesizer_updateSettings(self, *args)
     def synthesize(self, *args): return _vabamorf.Synthesizer_synthesize(self, *args)
     __swig_destroy__ = _vabamorf.delete_Synthesizer
     __del__ = lambda self : None;

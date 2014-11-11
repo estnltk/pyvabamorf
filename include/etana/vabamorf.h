@@ -67,14 +67,16 @@ private:
 class Synthesizer {
 public:
     Synthesizer(std::string const lexPath);
-    void updateSettings(bool guess, bool phon);
-    std::string synthesize(std::string lemma,
-                           std::string partofspeech,
-                           std::string form,
-                           std::string hint,
-                           bool guess,
-                           bool phon);
+    std::vector<std::string> synthesize(
+        std::string lemma,
+        std::string partofspeech,
+        std::string form,
+        std::string hint,
+        bool guess,
+        bool phon);
 private:
+    void updateSettings(bool guess, bool phon);
+    
     ETMRFAS morf;
 };
 

@@ -9,5 +9,5 @@ if not vm.FSCInit():
 def terminate():
     vm.FSCTerminate()
 
-from morf import analyze
+from morf import analyze, synthesize
 from morf import PyVabamorf
