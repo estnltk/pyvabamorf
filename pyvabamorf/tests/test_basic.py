@@ -2,10 +2,12 @@
 from __future__ import unicode_literals, print_function
 
 import unittest
+import operator
 from pyvabamorf import analyze
-from pyvabamorf.morf import trim_phonetics, tokenize, analysis_as_dict, convert, deconvert
+from pyvabamorf.morf import trim_phonetics, get_group_tokens, analysis_as_dict, convert, deconvert
 from pyvabamorf.vabamorf import Analysis
 from pprint import pprint
+from functools import reduce
 
 class TrimPhoneticsTest(unittest.TestCase):
     
@@ -25,45 +27,43 @@ class TrimPhoneticsTest(unittest.TestCase):
         self.assertEqual(trim_phonetics('~~???ab]c<d'), 'abcd')
 
 
-class TokenizeTest(unittest.TestCase):
-    '''Testcase for removal of wierd helper characters in vabamorf output.'''
+class TokensTest(unittest.TestCase):
+
+    def get_tokens(self, root):
+        return reduce(operator.add, get_group_tokens(root))
 
     def test_simple(self):
-        tokens = tokenize('all_+maa_raud_tee_jaam')
+        tokens = self.get_tokens('all_+maa_raud_tee_jaam~~+')
         self.assertListEqual(tokens, ['all', 'maa', 'raud', 'tee', 'jaam'])
 
-    def test_with_phonetics(self):
-        tokens = tokenize('all_+maa_raud_tee_jaam<~')
-        self.assertListEqual(tokens, ['all', 'maa', 'raud', 'tee', 'jaam<~'])
-
-    def test_lykkimine(self):
-        tokens = tokenize('tallimeheks-saunameheks-majahoidjaks')
-        self.assertListEqual(tokens, ['tallimeheks', 'saunameheks', 'majahoidjaks'])
+    def test_hyphen_grouping(self):
+        tokens = self.get_tokens('saunameheks-tallimeheks-majahoidjaks')
+        self.assertListEqual(tokens, ['saunameheks', 'tallimeheks', 'majahoidjaks'])
 
     def test_underscore(self):
-        tokens = tokenize('_')
+        tokens = self.get_tokens('_')
         self.assertListEqual(tokens, ['_'])
         
     def test_plus(self):
-        tokens = tokenize('+')
+        tokens = self.get_tokens('+')
         self.assertListEqual(tokens, ['+'])
         
     def test_equalmark(self):
-        tokens = tokenize('=')
+        tokens = self.get_tokens('=')
         self.assertListEqual(tokens, ['='])
     
     def test_ltmark(self):
-        tokens = tokenize('<')
+        tokens = self.get_tokens('<')
         self.assertListEqual(tokens, ['<'])
    
     def test_bracketclose(self):
-        tokens = tokenize(']')
+        tokens = self.get_tokens(']')
         self.assertListEqual(tokens, [']'])
-
+        
     def test_hyphen(self):
-        tokens = tokenize('-')
-        self.assertListEqual(tokens, ['-']) # lykkimine
-
+        tokens = self.get_tokens('-')
+        self.assertListEqual(tokens, ['-'])
+        
 
 class AnalysisAsDictTest(unittest.TestCase):
     
@@ -86,27 +86,7 @@ class AnalysisAsDictTest(unittest.TestCase):
     def test_verb_default_args(self):
         self.assertDictEqual(analysis_as_dict(self.verbanalysis()),
                              self.verb_phonetic_compound())
-        
-    def test_substantive(self):
-        self.assertDictEqual(analysis_as_dict(self.substantiveanalysis(), False, False),
-                             self.substantive())
-    
-    def test_substantive_phonetic(self):
-        self.assertDictEqual(analysis_as_dict(self.substantiveanalysis(), True, False),
-                             self.substantive_phonetic())
-    
-    def test_substantive_compound(self):
-        self.assertDictEqual(analysis_as_dict(self.substantiveanalysis(), False, True),
-                             self.substantive_compound())
-    
-    def test_substantive_phonetic_compound(self):
-        self.assertDictEqual(analysis_as_dict(self.substantiveanalysis(), True, True),
-                             self.substantive_phonetic_compound())
 
-    def test_substantive_default_args(self):
-        self.assertDictEqual(analysis_as_dict(self.substantiveanalysis()),
-                             self.substantive_phonetic_compound())
-    
     def verbanalysis(self):
         return Analysis(convert('l<aul'),
                         convert('b'),
@@ -157,6 +137,26 @@ class AnalysisAsDictTest(unittest.TestCase):
                         convert('S'),
                         convert('pl all'))
 
+    def test_substantive(self):
+        self.assertDictEqual(analysis_as_dict(self.substantiveanalysis(), False, False),
+                             self.substantive())
+    
+    def test_substantive_phonetic(self):
+        self.assertDictEqual(analysis_as_dict(self.substantiveanalysis(), True, False),
+                             self.substantive_phonetic())
+    
+    def test_substantive_compound(self):
+        self.assertDictEqual(analysis_as_dict(self.substantiveanalysis(), False, True),
+                             self.substantive_compound())
+    
+    def test_substantive_phonetic_compound(self):
+        self.assertDictEqual(analysis_as_dict(self.substantiveanalysis(), True, True),
+                             self.substantive_phonetic_compound())
+
+    def test_substantive_default_args(self):
+        self.assertDictEqual(analysis_as_dict(self.substantiveanalysis()),
+                             self.substantive_phonetic_compound())
+
     def substantive(self):
         return {'clitic': '',
                 'ending': 'ile',
@@ -192,7 +192,11 @@ class AnalysisAsDictTest(unittest.TestCase):
                 'partofspeech': 'S',
                 'root_tokens': ['lennuki', 'kandja'],
                 'root': 'lennukikandja'}
-
+                
+                
+    def test_hyphen_grouping(self):
+        self.assertDictEqual(analysis_as_dict(self.substantiveanalysis()),
+                             self.substantive_phonetic_compound())
                 
 class TextIsSameAsListTest(unittest.TestCase):
     
