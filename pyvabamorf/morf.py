@@ -1,6 +1,26 @@
 # -*- coding: utf-8 -*-
+'''
+Morphoanalysis functionality of pyvabamorf package.
 
-from __future__ import unicode_literals
+Attributes
+----------
+
+PACKAGE_PATH: str
+    The path where the pyvabamorf package is located.
+DICT_PATH: str
+    The path of the default vabamorf dictionary embedded with pyvabamorf.
+phonetic_markers: str
+    List of characters that make up phonetic markup.
+compound_markers: str
+    List of characters that make up compound markup.
+markers: str
+    List of characters of both phonetic and compound markup.
+phonetic_regex: regex
+    Regular expression matching any phonetic marker.
+compound_regex: regex
+    Regular expression matching any compound marker.
+'''
+from __future__ import unicode_literals, print_function
 
 import pyvabamorf.vabamorf as vm
 import os
@@ -8,11 +28,17 @@ import six
 import re
 import warnings
 
+# path listings
 PACKAGE_PATH = os.path.dirname(__file__)
 DICT_PATH = os.path.join(PACKAGE_PATH, 'dct')
 
-markers = ['?', '<', '=', '+', ']', '_']
-tokenize_regex = re.compile('[?<=+\]]')
+# various markers in 
+phonetic_markers = '~?]<'
+compound_markers = '_+=-'
+markers = phonetic_markers + compound_markers
+phonetic_regex = re.compile('|'.join([re.escape(c) for c in phonetic_markers]), flags=re.M)
+compound_regex = re.compile('|'.join([re.escape(c) for c in compound_markers]), flags=re.M)
+
 
 def convert(word):
     '''This method converts given `word` to appropriate encoding and type to be given to
@@ -35,6 +61,26 @@ def deconvert(word):
     else:
         return word
 
+def trim_phonetics(root):
+    '''Function that trims phonetic markup from the root.
+    
+    Parameters
+    ----------
+    root: str
+        The string to remove the phonetic markup.
+        
+    Returns
+    -------
+    str
+        The string with phonetic markup removed.
+    '''
+    global phonetic_markers
+    global phonetic_regex
+    if root in phonetic_markers:
+        return root
+    else:
+        return phonetic_regex.sub('', root)
+
 def tokenize(root):
     '''Function that takes the root form of the word and parses it into tokens.
     For example '<all_m<aa_r<aud_t<ee_j<aosk<ond' would be parsed as ['all', 'maa', 'raud', 'tee', 'jaos', 'kond']
@@ -49,13 +95,13 @@ def tokenize(root):
     list of str
         List of root tokens
     '''
-    global markers
-    global tokenize_regex
+    global compound_markers
+    global compound_regex
     if root in markers: # special case
         return [root]
-    return tokenize_regex.sub('', root).split('_')
+    return [tok for tok in compound_regex.split(root) if len(tok) > 0]
 
-def analysis_as_dict(an, clean_root):
+def analysis_as_dict(an, trim_phonetic=True, trim_compound=True):
     '''Convert an analysis instance to a dictionary.
     Also adds "ma" ending to verbs.
     
@@ -63,8 +109,10 @@ def analysis_as_dict(an, clean_root):
     ----------
     an: vabamorf.WordAnalysis
         Analysis result as returned by vabamorf library.
-    clean_root: boolean
-        If True, then removes extra annotations from root form.
+    trim_phonetic: boolean
+        If True, then removes phonetic annotations from root form. (default: True)
+    trim_compound: boolean
+        If True, then removes compund word annotations from root form. (default: True)
     
     Returns
     -------
@@ -72,12 +120,19 @@ def analysis_as_dict(an, clean_root):
         Morfoanalysis results.
     '''
     root = deconvert(an.root)
-    toks = tokenize(root)
+    
+    # extract tokens and construct lemma
+    toks = tokenize(trim_phonetics(root))
     lemma = ''.join(toks)
-    if clean_root:
-        root = lemma
     if an.partofspeech == 'V':
         lemma += 'ma'
+        
+    # modify root form according to arguments
+    if trim_phonetic:
+        root = trim_phonetics(root)
+    if trim_compound:
+        root = ''.join(tokenize(root))
+    
     return {'root': root,
             'root_tokens': toks,
             'ending': deconvert(an.ending),
@@ -87,23 +142,31 @@ def analysis_as_dict(an, clean_root):
             'lemma': lemma}
 
 def get_args(**kwargs):
-    '''Check for illegal arguments.
+    '''Parse arguments from keyword parameters.
+    
+    Raises
+    ------
+    Exception
+        In case an illegal argument is passed.
     
     Returns
     -------
-    (boolean, boolean)
-        Settings respectively for use_heuristics and clean_root.
+    (boolean, boolean, boolean)
+        Use heuristics, clean phonetics, clean compound.
     '''
     use_heuristics = True
-    clean_root     = True
+    trim_phonetic = True
+    trim_compound = True
     for key, value in kwargs.items():
         if key == 'use_heuristics':
             use_heuristics = bool(value)
-        elif key == 'clean_root':
-            clean_root = bool(value)
+        elif key == 'trim_phonetic':
+            trim_phonetic = bool(value)
+        elif key == 'trim_compound':
+            trim_compound = bool(value)
         else:
             raise Exception('Unkown argument: {0}'.format(key))
-    return (use_heuristics, clean_root)
+    return (use_heuristics, trim_phonetic, trim_compound)
             
                 
 class PyVabamorf(object):
@@ -125,8 +188,10 @@ class PyVabamorf(object):
         ------------------
         use_heuristics: boolean
             If True, then use heuristics, when analyzing unknown words (default: True)
-        clean_root: boolean
-            If True, remove extra markers from root form (default: True)
+        trim_phonetic: boolean
+            If True, then removes phonetic annotations from root form. (default: True)
+        trim_compound: boolean
+            If True, then removes compund word annotations from root form. (default: True)
 
         Returns
         -------
@@ -134,7 +199,7 @@ class PyVabamorf(object):
             List of analysis for each word in input. One word usually contains more than one analysis as the
             analyser does not perform disambiguation.
         '''
-        use_heuristics, clean_root = get_args(**kwargs)
+        use_heuristics, trim_phonetic, trim_compound = get_args(**kwargs)
         
         # if input is a string, then tokenize it with whitespace
         if isinstance(words, six.string_types):
@@ -147,7 +212,7 @@ class PyVabamorf(object):
         morfresult = self._analyzer.analyze(vm.StringVector(words), use_heuristics)
         result = []
         for word, analysis in morfresult:
-            analysis = [analysis_as_dict(an, clean_root) for an in analysis]
+            analysis = [analysis_as_dict(an, trim_phonetic, trim_compound) for an in analysis]
             result.append({'text': deconvert(word),
                            'analysis': analysis})
         return result
@@ -165,8 +230,10 @@ def analyze(words, **kwargs):
     ------------------
     use_heuristics: boolean
         If True, then use heuristics, when analyzing unknown words (default: True)
-    clean_root: boolean
-        If True, remove extra markers from root form (default: True)
+    trim_phonetic: boolean
+        If True, then removes phonetic annotations from root form. (default: True)
+    trim_compound: boolean
+        If True, then removes compund word annotations from root form. (default: True)
 
     Returns
     -------

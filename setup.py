@@ -31,7 +31,7 @@ if sys.version_info[0] == 3:
     swig_opts.append('-py3')
     
 setup(name='pyvabamorf',
-    version="1.4",
+    version="1.5",
     description='Python interface for the Vabamorf Estonian lemmatizer and morphological analyzer.',
     author='Tarmo Vaino, Heiki-Jaan Kaalep, Sven Laur, Timo Petmanson, Aleksandr Tkachenko, Siim Orasmaa, Raul Sirel',
     author_email='tpetmanson@gmail.com',
@@ -59,6 +59,6 @@ setup(name='pyvabamorf',
 
     packages = ['pyvabamorf', 'pyvabamorf.test'],
     package_dir = {'pyvabamorf': 'pyvabamorf',
-                   'pyvabamorf.test': os.path.join('pyvabamorf', 'test')},
+                   'pyvabamorf.test': os.path.join('pyvabamorf', 'tests')},
     package_data = {'pyvabamorf': [os.path.join('dct', 'et.dct')]}
     )
