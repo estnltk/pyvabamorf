@@ -1,7 +1,7 @@
 PyVabamorf
 ==========
 
-PyVabamorf is a Python interface for the Vabamorf Estonian lemmatizer and morphological analyzer.
+PyVabamorf is a Python interface for the Vabamorf Estonian lemmatizer and morphological analyzer/synthesizer.
 Vabamorf is a open source morphological analyzer by Filosoft, which can be obtained from here: https://github.com/Filosoft/vabamorf .
 
 # Example
@@ -60,49 +60,6 @@ analyze(['Usjas', 'kaslane', 'jookseb', 'maastikul'])
 In case of a string, `pyvabamorf` just uses default `split()` function to tokenize the text.
 
 The output is a list, one per word, containing one or more dictionaries with different analysis. Note that the underlying `vabamorf` library does not yet include disambiguation, so all possible analysis will be returned.
-
-## Heuristics
-
-By default, `pyvabamorf` has enabled heuristics, which are used to analyze unknown words. Heuristics can be disabled by passing the `analyze` function the argument `use_heuristics=False`.
-
-```
->>> pprint(analyze('seeontundmatuile'))
-[{'analysis': [{'clitic': '',
-                'ending': 'ile',
-                'form': 'pl all',
-                'lemma': 'seeontundmatu',
-                'partofspeech': 'S',
-                'root': 'seeontundmatu',
-                'root_tokens': ['seeontundmatu']}],
-  'text': 'seeontundmatuile'}]
->>> pprint(analyze('seeontundmatuile', use_heuristics=False))
-[{'analysis': [], 'text': 'seeontundmatuile'}]
-```
-
-## Cleaned root forms
-
-By default, `pyvabamorf` removes extra annotation from analyzed root forms. This can be disabled by using argument `clean_root=False`.
-
-```
->>> pprint(analyze('allmaaraudteedele'))
-[{'analysis': [{'clitic': '',
-                'ending': 'dele',
-                'form': 'pl all',
-                'lemma': 'allmaaraudtee',
-                'partofspeech': 'S',
-                'root': 'allmaaraudtee',
-                'root_tokens': ['all', 'maa', 'raud', 'tee']}],
-  'text': 'allmaaraudteedele'}]
->>> pprint(analyze('allmaaraudteedele', clean_root=False))
-[{'analysis': [{'clitic': '',
-                'ending': 'dele',
-                'form': 'pl all',
-                'lemma': 'allmaaraudtee',
-                'partofspeech': 'S',
-                'root': '<all_m<aa_r<aud_t<ee',
-                'root_tokens': ['all', 'maa', 'raud', 'tee']}],
-  'text': 'allmaaraudteedele'}]
-```
 
 # Installation
 
