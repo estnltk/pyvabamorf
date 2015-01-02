@@ -26,11 +26,11 @@ swig_opts = ['-c++', '-modern']
 
 # Python 3 specific configuration
 extra = {}
-if sys.version_info[0] == 3: 
+if sys.version_info[0] == 3:
     swig_opts.append('-py3')
-    
+
 setup(name='pyvabamorf',
-    version="1.5",
+    version="1.6",
     description='Python interface for the Vabamorf Estonian lemmatizer and morphological analyzer.',
     author='Tarmo Vaino, Heiki-Jaan Kaalep, Sven Laur, Timo Petmanson, Aleksandr Tkachenko, Siim Orasmaa, Raul Sirel',
     author_email='tpetmanson@gmail.com',
