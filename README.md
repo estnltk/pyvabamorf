@@ -120,13 +120,13 @@ Windows users can download pre-built binaries for latest `pyvabamorf` release:
 
 ### 32-bit
 
-* https://github.com/tpetmanson/pyvabamorf/blob/master/dist/pyvabamorf-1.5.win32-py2.7.msi
-* https://github.com/tpetmanson/pyvabamorf/blob/master/dist/pyvabamorf-1.5.win32-py3.4.msi
+* https://github.com/tpetmanson/pyvabamorf/blob/master/dist/pyvabamorf-1.6.win32-py2.7.msi
+* https://github.com/tpetmanson/pyvabamorf/blob/master/dist/pyvabamorf-1.6.win32-py3.4.msi
 
 ### 64-bit
 
-* https://github.com/tpetmanson/pyvabamorf/blob/master/dist/pyvabamorf-1.5.win-amd64-py2.7.msi
-* https://github.com/tpetmanson/pyvabamorf/blob/master/dist/pyvabamorf-1.5.win-amd64-py3.4.msi
+* https://github.com/tpetmanson/pyvabamorf/blob/master/dist/pyvabamorf-1.6.win-amd64-py2.7.msi
+* https://github.com/tpetmanson/pyvabamorf/blob/master/dist/pyvabamorf-1.6.win-amd64-py3.4.msi
 
 ### Building from source.
 
