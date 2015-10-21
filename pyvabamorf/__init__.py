@@ -1,5 +1,9 @@
 # -*- coding: utf-8 -*-
-import pyvabamorf.vabamorf as vm
+
+from __future__ import unicode_literals, print_function, absolute_import
+
+from . import vabamorf as vm
+from .morf import Vabamorf, analyze, synthesize, spellcheck
 import atexit
 
 if not vm.FSCInit():
@@ -8,6 +12,3 @@ if not vm.FSCInit():
 @atexit.register
 def terminate():
     vm.FSCTerminate()
-
-from morf import analyze, synthesize
-from morf import PyVabamorf

@@ -56,7 +56,7 @@ setup(name='pyvabamorf',
                    'Topic :: Text Processing :: Linguistic'],
 
     ext_modules = [
-        Extension('estnltk.vabamorf._vabamorf',
+        Extension('pyvabamorf._vabamorf',
                   [swig_interface, vabamorf_src] + lib_sources,
                   swig_opts = swig_opts,
                   include_dirs=include_dirs)

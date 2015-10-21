@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Morphoanalysis/synthesis functionality of estnltk vabamorf package.
+Morphoanalysis/synthesis/spellcheck functionality of pyvabamorf.
 
 Attributes
 ----------
@@ -25,8 +25,8 @@ compound_regex: regex
 from __future__ import unicode_literals, print_function, absolute_import
 
 from . import vabamorf as vm
+from . import six
 import os
-import six
 import re
 import operator
 from functools import reduce
@@ -43,7 +43,7 @@ compound_markers = frozenset('_+=')
 all_markers = phonetic_markers | compound_markers
 
 def regex_from_markers(markers):
-    '''Given a string of characters, construct a regex that matches them.
+    """Given a string of characters, construct a regex that matches them.
 
     Parameters
     ----------
@@ -54,7 +54,7 @@ def regex_from_markers(markers):
     -------
     regex
         The regular expression matching the given markers.
-    '''
+    """
     return re.compile('|'.join([re.escape(c) for c in markers]))
 
 phonetic_regex = regex_from_markers(phonetic_markers)
