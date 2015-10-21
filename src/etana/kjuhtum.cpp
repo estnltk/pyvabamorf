@@ -1,4 +1,3 @@
-
 // teeb kindlaks, millise tyybiga on liitsõnas tyvi1 puhul tegu
 //
 

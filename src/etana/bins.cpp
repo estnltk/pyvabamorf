@@ -1,4 +1,3 @@
-
 /*  NB! seda faili kasutab ka "init3.exe"!!!
 * 2-otsimised op-ma'lus
 */

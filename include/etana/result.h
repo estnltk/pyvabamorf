@@ -1,4 +1,3 @@
-
 /*
  Loend mitmesugustest vigadest, mis v�ivad tekkida standardsete 
  alamprogrammide kasutamisel. (C) Tarmo Vaino 1992

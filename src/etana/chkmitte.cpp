@@ -1,4 +1,3 @@
-
 /*
 * kontrollib, kas S6na on 'mittes�na' nt - & ;
 */

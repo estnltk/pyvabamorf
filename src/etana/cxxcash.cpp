@@ -1,4 +1,3 @@
-
 #include "cxxcash.h"
 
 #ifdef CASH0 //==see on praegu kasutusel=======================================

@@ -1,4 +1,3 @@
-
 /*
 * kontrollib, kas on pref + tyvi
 */

@@ -1,4 +1,3 @@
-
 // 1995 
 //
 // 2002.03.14 klassiks �mberv��natud

@@ -1,4 +1,3 @@
-
 #include "mittesona.h"
 #include "mrf-mrf.h"
 

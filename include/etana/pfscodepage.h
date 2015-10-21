@@ -1,4 +1,3 @@
-
 #if !defined(PGSCODEPAGE_H)
 #define PGSCODEPAGE_H
 

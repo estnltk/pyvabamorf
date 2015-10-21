@@ -1,4 +1,3 @@
-
 #if !defined(LISAKR6NKSUD_H)
 #define LISAKR6NKSUD_H
 class LISAKR6NKSUD

@@ -46,6 +46,8 @@ namespace std {
     %template(AnalysisVector) vector<Analysis>;
     %template(WordAnalysis) pair<string, vector<Analysis> >;
     %template(SentenceAnalysis) vector<pair<string, vector<Analysis> > >;
+    %template(StringVector) vector<std::string>;
+    %template(SpellingSuggestions) vector<SpellingResults>;
 }
 
 %include "include/etana/vabamorf.h"

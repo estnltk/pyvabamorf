@@ -1,4 +1,3 @@
-
 // igasugu sonaloendid, mida kasutatakse mitmel pool
 
 #include "mrf-mrf.h"

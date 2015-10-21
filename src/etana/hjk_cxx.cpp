@@ -1,4 +1,3 @@
-
 /*
 * otsib tyve, kusjuures arvestab juba leitud juppidega
 */

@@ -1,4 +1,3 @@
-
 #include "f-info.h"
 
 void cFILEINFO::ReadFileInfo(const CFSFileName *pDctName)

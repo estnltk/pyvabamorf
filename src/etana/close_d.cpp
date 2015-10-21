@@ -1,4 +1,3 @@
-
 #include "cxxbs3.h"
 
 void DCTRD::Close(void)

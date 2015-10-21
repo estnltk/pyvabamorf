@@ -1,4 +1,3 @@
-
 #include <fcntl.h>
 #if defined(WIN32)
     #include <malloc.h>

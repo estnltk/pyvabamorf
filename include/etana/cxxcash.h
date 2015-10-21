@@ -1,4 +1,3 @@
-
 #ifndef CxxCASH_H
     #define CxxCASH_H
     #define CASH0

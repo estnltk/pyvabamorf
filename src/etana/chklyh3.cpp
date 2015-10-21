@@ -1,4 +1,3 @@
-
 /*
 * kontrollib, kas S6na on suurt�hel. lyhend mingi l�puga;
 * n�iteks:

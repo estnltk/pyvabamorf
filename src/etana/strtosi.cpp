@@ -1,4 +1,3 @@
-
 // String m�rgiga t�isarvuks.
 
 #include "mrflags.h"

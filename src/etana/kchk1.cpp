@@ -1,4 +1,3 @@
-
 /*
 * kontrollib, kas word on tyvi+lp;
 

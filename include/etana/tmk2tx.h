@@ -1,4 +1,3 @@
-
 // (C) 2002, suvi
 
 #if !defined(TMK2TX_H)

@@ -1,4 +1,3 @@
-
 /*
 * kontrollib, kas S6na on 1-t�hel. lyhend;
 */

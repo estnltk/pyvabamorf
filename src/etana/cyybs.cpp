@@ -1,4 +1,3 @@
-
 // 2002.06.13
 //
 // TV000823 'cXXfirst()' annab 0pikkusega stringi peale 'POLE_YLDSE'

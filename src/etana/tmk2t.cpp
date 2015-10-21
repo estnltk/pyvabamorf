@@ -1,5 +1,3 @@
-
-
 #define STRICT
 #include <memory.h>
 #include <string.h>

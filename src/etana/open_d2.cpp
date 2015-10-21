@@ -1,4 +1,3 @@
-
 // HJK 14.08.95
 // TV  25.08.95 - printf'id v�ljat6stetud
 //     19.02.02 - klass �mberm�tsitud

@@ -1,4 +1,3 @@
-
 #if !defined(TYYBID_H)
 #define TYYBID_H
 

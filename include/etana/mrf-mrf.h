@@ -1,4 +1,3 @@
-
 #if !defined(MRF_MRF_H)
 #define MRF_MRF_H
 

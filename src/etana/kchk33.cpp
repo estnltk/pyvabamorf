@@ -1,4 +1,3 @@
-
 /*
 * kontrollib, kas S6na on pref+tyvi+suf+lp
 * v�imal. prefiksid ja sufiksid peavad juba olema ahelas

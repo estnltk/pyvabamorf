@@ -1,4 +1,3 @@
-
 /*
 * leiab etteantud stringi silbistruktuuri;
 * eeldab, et sona on teisendatud vaiketaheliseks (v.a 1. taht)

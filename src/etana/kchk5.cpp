@@ -1,4 +1,3 @@
-
 // Pole enam kasutusel???
 /*
 * kontr, kas S6na on tyvi1+vahesuf+tyvi2+[suf]+lp

@@ -1,4 +1,3 @@
-
 /*
 * kontrollib, kas S6na on suurt�hega algav ja '-' sisaldav;
 * n�iteks:

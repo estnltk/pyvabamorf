@@ -1,4 +1,3 @@
-
 #include "mrf-mrf.h"
 
 // v�ljundiks on tulemuste struktuur, mitte string
@@ -242,8 +241,10 @@ void MORF0::chkmin(
             }
             if (!tul->on_tulem())
             {
-                if (mrfFlags.Chk(MF_LUBAMITMIKUO))
-                {
+                // if (mrfFlags.Chk(MF_LUBAMITMIKUO)) vana versioon HJK 04.2015
+                if (mrfFlags.Chk(MF_V0TAKOKKU)==false && // ei võta Sri Lankat kokku
+                    mrfFlags.Chk(MF_DFLT_SUG)==false)    // ... ega ole soovitaja
+                {           // ... siis Sri kõlbab lubatavaks sõnaks
                     if (((dctLoend[5])[(FSxCHAR *) (const FSxCHAR *) sona] != -1) ||
                         ((dctLoend[6])[(FSxCHAR *) (const FSxCHAR *) sona] != -1))
                         // voib olla mitmesonal. geogr. nime 1. voi 2. osa

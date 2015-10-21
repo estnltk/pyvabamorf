@@ -1,4 +1,3 @@
-
 /*
 * kontr, kas S6na on tyvi1+tyvi2+lp
 */

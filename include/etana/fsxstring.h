@@ -1,4 +1,3 @@
-
 #if !defined( FSXSTRING_H )
 #define FSXSTRING_H
 

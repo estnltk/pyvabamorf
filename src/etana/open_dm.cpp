@@ -1,4 +1,3 @@
-
 /*
 * teeb k6ik ettevalmistused use_d() kasutamiseks
 */

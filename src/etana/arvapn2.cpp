@@ -1,4 +1,3 @@
-
 /*
 * proovib arvata pa'risnime
 * millel lopp apostroofiga 

@@ -1,4 +1,3 @@
-
 #if !defined( TMPLARRAY_H )
 #define TMPLARRAY_H
 

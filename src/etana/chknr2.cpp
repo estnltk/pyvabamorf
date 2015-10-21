@@ -1,4 +1,3 @@
-
 /*
 * kontrollib, kas S6na on mingi nr kombinatsioon;
 * n�iteks:

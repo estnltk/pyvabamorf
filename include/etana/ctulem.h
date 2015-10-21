@@ -1,5 +1,3 @@
-
-
 #if !defined( CTULEM_H )
 #define CTULEM_H
 

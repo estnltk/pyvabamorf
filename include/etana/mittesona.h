@@ -1,4 +1,3 @@
-
 #if !defined(MITTESONA_H)
 #define MITTESONA_H
 

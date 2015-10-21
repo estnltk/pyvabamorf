@@ -1,4 +1,3 @@
-
 // 2003.01.03 stringiklassile �mbertehtud
 
 #include <stdlib.h> //sealt windoosas v�lismuutujad environ ja wenviron

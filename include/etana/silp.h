@@ -1,4 +1,3 @@
-
 #if !defined( SILP_H )
     #define SILP_H
 

@@ -1,4 +1,3 @@
-
 #if !defined( _ROMANNR_H_ )
 #define _ROMANNR_H_
 

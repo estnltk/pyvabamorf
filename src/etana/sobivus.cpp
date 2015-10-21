@@ -1,4 +1,3 @@
-
 // 2000.07.14 TV 
 // 2002.03.20 TV klass �mberv��natud
 
@@ -150,11 +149,13 @@ int MORF0::ssobivus(
             if (on_paha_sl(grupid, GetLgNr(grupid, i), sl, TABU_SL))
                 continue;
             }
+        /*  hjk 04.2015: las need mitmesõnaliste nimede osad olla alati lubatud
         if (!mrfFlags.Chk(MF_SPELL)) // aint spelleri puhul on m�ned s�nad lubatud, nt. Aires
             {
             if (on_paha_sl(grupid, GetLgNr(grupid, i), sl, SPELL_SL))
                  continue;
            }
+        */
         if (!mrfFlags.Chk(MF_LUBATESA)) // normaalse morfi puhul tesauruse algvormide staatuses s�navormid (aukudega) pole lubatud
             {
             if (on_paha_sl(grupid, GetLgNr(grupid, i), sl, TESA_SL))

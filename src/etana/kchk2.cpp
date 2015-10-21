@@ -1,4 +1,3 @@
-
 /*
 * kontrollib, kas S6na on tyvi+suf+lp;
 * paneb seejuures v�imal. sufiksid lp[]-sse

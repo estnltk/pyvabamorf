@@ -1,4 +1,3 @@
-
 #if !defined( ETMRFA_H )
 #define ETMRFA_H
 

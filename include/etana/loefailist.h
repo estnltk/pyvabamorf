@@ -1,5 +1,3 @@
-
-
 #if !defined( LOEFAILIST_H )
 #define LOEFAILIST_H
 

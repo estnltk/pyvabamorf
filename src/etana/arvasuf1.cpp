@@ -1,4 +1,3 @@
-
 /*
 * proovib leida suf+lp kombinatsioone
 * algoritm: eraldab s�na l�pust l�ppe ja

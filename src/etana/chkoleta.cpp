@@ -1,4 +1,3 @@
-
 #include "mrf-mrf.h"
 
 void MORF0::arvamin(

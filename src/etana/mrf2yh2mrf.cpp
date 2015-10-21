@@ -1,4 +1,3 @@
-
 #include "mrf2yh2mrf.h"
 
 static  MRF2YH_LOEND mrf2yhPunktuatsioon[] = 

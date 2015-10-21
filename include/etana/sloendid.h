@@ -1,4 +1,3 @@
-
 #if !defined(SLOENDID_H)
 #define SLOENDID_H
 

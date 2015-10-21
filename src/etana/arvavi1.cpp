@@ -1,4 +1,3 @@
-
 /*
 * kontrollib, kas S6nas on keskel kirjavahem�rk v�i suurta'ht, millega
 * algab tavaline sona (vo'ib olla tyhik ununenud)

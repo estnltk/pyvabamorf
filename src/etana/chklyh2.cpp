@@ -1,4 +1,3 @@
-
 // HJK000823 boundcheckerige leitud vigade parandus
 /*
 * kontrollib, kas S6na on lyhend voi lyhend-lp;
