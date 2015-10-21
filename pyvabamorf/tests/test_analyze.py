@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals, print_function
+from __future__ import unicode_literals, print_function, absolute_import
 
 import unittest
 import operator
-from pyvabamorf import analyze
-from pyvabamorf.morf import trim_phonetics, get_group_tokens, analysis_as_dict, convert, deconvert
-from pyvabamorf.vabamorf import Analysis
-from pprint import pprint
+from ..morf import trim_phonetics, get_group_tokens, postprocess_analysis, convert, analyze
+from ..vabamorf import Analysis
 from functools import reduce
+
 
 class TrimPhoneticsTest(unittest.TestCase):
     
@@ -68,24 +67,20 @@ class TokensTest(unittest.TestCase):
 class AnalysisAsDictTest(unittest.TestCase):
     
     def test_verb_phonetic_compound(self):
-        self.assertDictEqual(analysis_as_dict(self.verbanalysis(), True, True),
+        self.assertDictEqual(postprocess_analysis(self.verbanalysis(), True, True),
                              self.verb_phonetic_compound())
     
     def test_verb_compound(self):
-        self.assertDictEqual(analysis_as_dict(self.verbanalysis(), False, True),
+        self.assertDictEqual(postprocess_analysis(self.verbanalysis(), False, True),
                              self.verb_compound())
     
     def test_verb_phonetic(self):
-        self.assertDictEqual(analysis_as_dict(self.verbanalysis(), True, False),
+        self.assertDictEqual(postprocess_analysis(self.verbanalysis(), True, False),
                              self.verb_phonetic())
     
     def test_verb(self):
-        self.assertDictEqual(analysis_as_dict(self.verbanalysis(), False, False),
+        self.assertDictEqual(postprocess_analysis(self.verbanalysis(), False, False),
                              self.verb())
-                             
-    def test_verb_default_args(self):
-        self.assertDictEqual(analysis_as_dict(self.verbanalysis()),
-                             self.verb_phonetic_compound())
 
     def verbanalysis(self):
         return Analysis(convert('l<aul'),
@@ -138,24 +133,20 @@ class AnalysisAsDictTest(unittest.TestCase):
                         convert('pl all'))
 
     def test_substantive_phonetic_compound(self):
-        self.assertDictEqual(analysis_as_dict(self.substantiveanalysis(), True, True),
+        self.assertDictEqual(postprocess_analysis(self.substantiveanalysis(), True, True),
                              self.substantive_phonetic_compound())
     
     def test_substantive_compound(self):
-        self.assertDictEqual(analysis_as_dict(self.substantiveanalysis(), False, True),
+        self.assertDictEqual(postprocess_analysis(self.substantiveanalysis(), False, True),
                              self.substantive_compound())
     
     def test_substantive_phonetic(self):
-        self.assertDictEqual(analysis_as_dict(self.substantiveanalysis(), True, False),
+        self.assertDictEqual(postprocess_analysis(self.substantiveanalysis(), True, False),
                              self.substantive_phonetic())
     
     def test_substantive(self):
-        self.assertDictEqual(analysis_as_dict(self.substantiveanalysis(), False, False),
+        self.assertDictEqual(postprocess_analysis(self.substantiveanalysis(), False, False),
                              self.substantive())
-                             
-    def test_substantive_default_args(self):
-        self.assertDictEqual(analysis_as_dict(self.substantiveanalysis()),
-                             self.substantive_phonetic_compound())
 
     def substantive_phonetic_compound(self):
         return {'clitic': '',
@@ -193,7 +184,20 @@ class AnalysisAsDictTest(unittest.TestCase):
                 'root_tokens': ['lennuki', 'kandja'],
                 'root': 'lennukikandja'}
                 
-                
+
+# http://luuletused.ee/1005/elu/hetke-volu  (by Seebivaht)
+SAMPLE_TEXT = '''Ma tahaks suudelda päikesekiiri
+vat nii ihalevad mu huuled päikese suule..
+Ma tahaks tantsida kesksuvises vihmas
+vat nii tunglevad minu tunded südames suures
+
+Keegi kord ütles, et ära karda
+armastus saab aja jooksul ainult kasvada
+Võta kõik vastu, mis sulle pakutakse,
+sest see, mis sulle antakse
+on sinu jaoks loodud'''
+
+
 class TextIsSameAsListTest(unittest.TestCase):
     
     def test_same(self):
@@ -229,19 +233,27 @@ class TextIsSameAsListTest(unittest.TestCase):
         self.assertListEqual(text_output, list_output)
     
     def text(self):
-        # http://luuletused.ee/1005/elu/hetke-volu
-        return '''Ma tahaks suudelda päikesekiiri 
-                vat nii ihalevad mu huuled päikese suule.. 
-                Ma tahaks tantsida kesksuvises vihmas 
-                vat nii tunglevad minu tunded südames suures 
-
-                Keegi kord ütles, et ära karda 
-                armastus saab aja jooksul ainult kasvada 
-                Võta kõik vastu, mis sulle pakutakse, 
-                sest see, mis sulle antakse 
-                on sinu jaoks loodud'''
+        return SAMPLE_TEXT
 
 
-                
-if __name__ == '__main__':
-    unittest.main()
+class DisambiguationTest(unittest.TestCase):
+
+    def test_disambiguation(self):
+        yes = analyze(SAMPLE_TEXT, disambiguate=True)
+        no = analyze(SAMPLE_TEXT, disambiguate=False)
+
+        self.assertEqual(len(yes), len(no))
+        for first, second in zip(yes, no):
+            yes = len(first['analysis'])
+            no = len(second['analysis'])
+            self.assertLessEqual(yes, no)
+
+
+class NameGroupingTest(unittest.TestCase):
+    """vabamorf used to concatenate cases like "New York" etc as
+    a single token in previous versions, which was a unexpected feature.
+    It should not happen any more."""
+
+    def test_grouping(self):
+        analysis = analyze('See on New York')
+        self.assertEqual(4, len(analysis))

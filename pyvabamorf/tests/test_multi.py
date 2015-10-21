@@ -1,14 +1,17 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from pyvabamorf import analyze
+from ..morf import analyze
 from multiprocessing import Pool
 import unittest
-
+import six
+import os
 
 class MultithreadingTest(unittest.TestCase):
     
     def test_multi(self):
+        if os.name == 'nt' and six.PY2: # do not run the test. avoid this Python bug http://bugs.python.org/issue10845
+            return
         self.assertListEqual(self.compute_multi(), self.compute_single())
     
     def compute_single(self):
@@ -34,6 +37,3 @@ class MultithreadingTest(unittest.TestCase):
             'Kampaania võitjaks osutunud 16-aastane jalgpalliga tegelev El Paso koolitüdruk Rhiannon Conelley valis kohtumise Neymariga. "Minek Hispaaniasse ja kohtumine iidoliga, see kõlab uskumatult," rääkis õnnelik Conelley kohalikule ajalehele El Paso Times. "Soovin Neymariga nii väga kohtuda ja see on mulle palju tähtsam kui 10 000 dollarit. Paljud võivad mitte nõustuda, kuid mul on õnneks võimalus ise otsustada." Ka tüdruku vanemad olid ebameeldivalt üllatunud, et kopsakas rahaline preemia jääb välja võtmata.',
             'Ajakirjanik uuris õnnelikult tüdrukult, mida ta kohtumisel Neymariga vutitähelt kindlasti küsiks. "Küsin, kas ta ei tahaks minuga abielluda," vastas Conelley naljatledes. "Loodan teda mitte hirmutada, ma ei taha, et turvamehed mind ruumist välja viskaksid," lisas tüdruk õhinal.',
             'Kampaanias osalemiseks tuli saata foto, mis oleks seotud nii jalgpalli kui Guaraná karastusjookidega. Pildid pandi firma kodulehele üles ja inimesed andsid neile hääli. Conelley pilt osutus populaarseimaks kogudes üle 4000 hääle.']
-
-if __name__ == '__main__':
-    unittest.main()

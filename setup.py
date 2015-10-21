@@ -42,7 +42,7 @@ setup(name='pyvabamorf',
     description='Python interface for the Vabamorf Estonian lemmatizer and morphological analyzer.',
     author='Tarmo Vaino, Heiki-Jaan Kaalep, Sven Laur, Timo Petmanson, Aleksandr Tkachenko, Siim Orasmaa, Raul Sirel',
     author_email='tpetmanson@gmail.com',
-    url='https://github.com/brainscauseminds/pyvabamorf',
+    url='https://github.com/estnltk/pyvabamorf',
     classifiers = ['Intended Audience :: Developers',
                    'Intended Audience :: Education',
                    'Intended Audience :: Science/Research',
@@ -67,4 +67,5 @@ setup(name='pyvabamorf',
     package_data = {
         'pyvabamorf': ['dct/*.dct'],
     },
-    )
+)
+
